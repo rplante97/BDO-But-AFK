@@ -97,7 +97,7 @@ def simulate(success_chance, cost, reward, number,starting):
 	return money, avg_tries/number
 
 concs_price = 7.85
-starting_money = 26000
+starting_money = 6000
 lives = 10000
 cur = 0
 deaths = 0
@@ -118,4 +118,4 @@ while(i < len(avg_net)):
 		neg_count += 1
 	i += 1
 
-print("lost money on: ", neg_count, " out of ", lives)
+print("lost money on: ", neg_count, " out of ", lives-deaths)
