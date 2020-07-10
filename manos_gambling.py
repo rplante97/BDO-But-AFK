@@ -66,8 +66,9 @@ def simulate(success_chance, cost, reward, number,starting):
 	while(tris_made < number):
 		pri_failed = False
 		clicks = 0
-		money += base_cost
 		while(True): 
+			money += base_cost
+			#print(money)
 			if money < 0: #if i go negative, reset everything and try again
 				return -1,-1
 			pri_roll = random.random()
@@ -97,13 +98,14 @@ def simulate(success_chance, cost, reward, number,starting):
 	return money, avg_tries/number
 
 concs_price = 7.85
-starting_money = 6000
+starting_money = 26000
 lives = 10000
 cur = 0
 deaths = 0
 avg_net = []
 while (cur < lives):
-	money, avgg = simulate([.7,.5,.3],[-250,concs_price * -10,concs_price * -12,concs_price * -13], 4000*.85, number=100,starting=starting_money)
+	money, avgg = simulate([.75,.45,.3],[-250,concs_price * -10,concs_price * -12,concs_price * -13], 4000*.85, number=100,starting=starting_money)
+	#exit(1)
 	if money == -1 and avgg == -1:
 		deaths += 1
 	else:
