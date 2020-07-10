@@ -50,9 +50,9 @@ def compute_odds(matrix, succeed_chance, payment, reward):
 	print(weighted_sum)
 
 
-def simulate(success_chance, cost, reward, number):
+def simulate(success_chance, cost, reward, number,starting):
 	tris_made = 0
-	money = 0
+	money = starting
 	avg_tries = 0
 	pri_success_chance = success_chance[0]
 	duo_success_chance = success_chance[1]
@@ -68,6 +68,8 @@ def simulate(success_chance, cost, reward, number):
 		clicks = 0
 		money += base_cost
 		while(True): 
+			if money < 0: #if i go negative, reset everything and try again
+				return -1,-1
 			pri_roll = random.random()
 			clicks += 1
 			money += pri_concs_cost
@@ -94,4 +96,26 @@ def simulate(success_chance, cost, reward, number):
 
 	return money, avg_tries/number
 
-print(simulate([.7,.5,.3],[-250,-100,-120,-130], 4000*.85, 100))
+concs_price = 7.85
+starting_money = 26000
+lives = 10000
+cur = 0
+deaths = 0
+avg_net = []
+while (cur < lives):
+	money, avgg = simulate([.7,.5,.3],[-250,concs_price * -10,concs_price * -12,concs_price * -13], 4000*.85, number=100,starting=starting_money)
+	if money == -1 and avgg == -1:
+		deaths += 1
+	else:
+		avg_net.append(money-starting_money)
+	cur += 1
+print("died: ", deaths, " out of: ", lives)
+
+neg_count = 0
+i = 0
+while(i < len(avg_net)):
+	if avg_net[i] < 0:
+		neg_count += 1
+	i += 1
+
+print("lost money on: ", neg_count, " out of ", lives)
