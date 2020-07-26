@@ -1,11 +1,4 @@
 import random
-import requests
-
-# test = requests.get("https://omegapepega.com/na/Rocaba%20Helmet/0").json()
-
-# # armor_type = []
-# armor_class = []
-
 
 reblath_18 = 6.09
 reblath_21 = 8.049 #mil
@@ -27,7 +20,7 @@ db['pen_boss'] = [17900, 'NA', 0, 0, 0, 0]
 
 def grunil_break_points(order):
 	tax = 0.85
-	fail_repair_cost = 0.34
+	#fail_repair_cost = 0.34
 	cur_stack = 18
 	stack_cost = reblath_18
 	cost_dict = {}
@@ -58,7 +51,7 @@ def grunil_break_points(order):
 		#		print("")
 		#		print(" name: ", order[current_index], " cost: ", round(current_cost,2))
 	#			print(" succ_chance: ", current_success_chance)
-#				print(" succ_cost: ", current_success_cost)
+	#			print(" succ_cost: ", current_success_cost)
 				#print(" fail_cost: ", current_fail_cost)
 			if current_index == 0:
 				best_index = 0
@@ -135,7 +128,7 @@ pen_db['dande'] = [1670, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 
 pen_db['kutum'] = [1800, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 18600, -531]
 pen_db['nouver'] = [1590, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 14100, -531]
 
-print(cron_pen(cost_dict, pen_db['leebur']))
+#print(cron_pen(cost_dict, pen_db['leebur']))
 
 def rank_pens(pen_db, cost_dict):
 	over_all_list = []

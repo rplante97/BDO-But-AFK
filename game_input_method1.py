@@ -49,10 +49,11 @@ def ReleaseKey(hexKeyCode):
     ii_.ki = KeyBdInput( 0, hexKeyCode, 0x0008 | 0x0002, 0, ctypes.pointer(extra) )
     x = Input( ctypes.c_ulong(1), ii_ )
     ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
-
+# https://gist.github.com/dretax/fe37b8baf55bc30e9d63
 # directx scan codes http://www.gamespp.com/directx/directInputKeyboardScanCodes.html
-while (True):
-    PressKey(0x11)
+for i in range(5):
+    PressKey(0x1C)
     time.sleep(1)
-    ReleaseKey(0x11)
+    ReleaseKey(0x1C)
     time.sleep(1)
+    
