@@ -1,11 +1,4 @@
 import random
-import requests
-
-# test = requests.get("https://omegapepega.com/na/Rocaba%20Helmet/0").json()
-
-# # armor_type = []
-# armor_class = []
-
 
 reblath_18 = 6.09
 reblath_21 = 8.049 #mil
@@ -27,7 +20,7 @@ db['pen_boss'] = [17900, 'NA', 0, 0, 0, 0]
 
 def grunil_break_points(order):
 	tax = 0.85
-	fail_repair_cost = 0.34
+	#fail_repair_cost = 0.34
 	cur_stack = 18
 	stack_cost = reblath_18
 	cost_dict = {}
@@ -58,7 +51,7 @@ def grunil_break_points(order):
 		#		print("")
 		#		print(" name: ", order[current_index], " cost: ", round(current_cost,2))
 	#			print(" succ_chance: ", current_success_chance)
-#				print(" succ_cost: ", current_success_cost)
+	#			print(" succ_cost: ", current_success_cost)
 				#print(" fail_cost: ", current_fail_cost)
 			if current_index == 0:
 				best_index = 0
@@ -91,7 +84,7 @@ def cron_pen(cost_dict, pen_details):
 	first = True
 	for i in cost_dict.keys():
 		cur_odds = i*pen_details[3] + pen_details[2]
-		#print(i)
+		#print(cur_odds)
 		cost = pen_details[10] - 2 -10
 		reward = pen_details[-2]
 
@@ -125,17 +118,17 @@ def cron_pen(cost_dict, pen_details):
 
 pen_db = {}
 #cost, name_of_success, base_chance, chance_growth, click_cost, stack_growth, down-grade name, stack softcap, post softcap gfain, pen price, cron(mil)
-pen_db['leebur'] = [1850, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 18100, -429*.8725]
-pen_db['urugon'] = [2390, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 17200, -493*.8725]
-pen_db['muskan'] = [1550, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 17700, -429*.8725]
-pen_db['dim tree'] = [2010, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 18400, -493*.8725]
-pen_db['red nose'] = [1630, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 17300, -429*.8725]
-pen_db['kzarka'] = [1430, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 16100, -531*.8725]
-pen_db['dande'] = [1670, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 15500, -611*.8725]
-pen_db['kutum'] = [1800, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 18600, -531*.8725]
-pen_db['nouver'] = [1590, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 14100, -531*.8725]
+pen_db['leebur'] = [1850, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 18100, -429]
+pen_db['urugon'] = [2390, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 17200, -493]
+pen_db['muskan'] = [1550, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 17700, -429]
+pen_db['dim tree'] = [2010, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 18400, -493]
+pen_db['red nose'] = [1630, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 17300, -429]
+pen_db['kzarka'] = [1430, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 16100, -531]
+pen_db['dande'] = [1670, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 15500, -611]
+pen_db['kutum'] = [1800, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 18600, -531]
+pen_db['nouver'] = [1590, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 14100, -531]
 
-print(cron_pen(cost_dict, pen_db['leebur']))
+#print(cron_pen(cost_dict, pen_db['leebur']))
 
 def rank_pens(pen_db, cost_dict):
 	over_all_list = []
