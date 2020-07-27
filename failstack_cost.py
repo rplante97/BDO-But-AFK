@@ -82,7 +82,7 @@ def cron_pen(cost_dict, pen_details):
 	first = True
 	for i in cost_dict.keys():
 		cur_odds = i*pen_details[3] + pen_details[2]
-		#print(cur_odds)
+		#print(i)
 		cost = pen_details[10] - 2 -10
 		reward = pen_details[-2]
 
@@ -116,15 +116,15 @@ def cron_pen(cost_dict, pen_details):
 
 pen_db = {}
 #cost, name_of_success, base_chance, chance_growth, click_cost, stack_growth, down-grade name, stack softcap, post softcap gfain, pen price, cron(mil)
-pen_db['leebur'] = [1850, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 18100, -429]
-pen_db['urugon'] = [2390, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 17200, -493]
-pen_db['muskan'] = [1550, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 17700, -429]
-pen_db['dim tree'] = [2010, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 18400, -493]
-pen_db['red nose'] = [1630, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 17300, -429]
-pen_db['kzarka'] = [1430, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 16100, -531]
-pen_db['dande'] = [1670, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 15500, -611]
-pen_db['kutum'] = [1800, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 18600, -531]
-pen_db['nouver'] = [1590, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 14100, -531]
+pen_db['leebur'] = [1850, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 18100, -429*.8725]
+pen_db['urugon'] = [2390, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 17200, -493*.8725]
+pen_db['muskan'] = [1550, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 17700, -429*.8725]
+pen_db['dim tree'] = [2010, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 18400, -493*.8725]
+pen_db['red nose'] = [1630, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 17300, -429*.8725]
+pen_db['kzarka'] = [1430, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 16100, -531*.8725]
+pen_db['dande'] = [1670, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 15500, -611*.8725]
+pen_db['kutum'] = [1800, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 18600, -531*.8725]
+pen_db['nouver'] = [1590, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 14100, -531*.8725]
 
 #cron_pen(cost_dict, pen_db['leebur'])
 

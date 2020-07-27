@@ -50,18 +50,20 @@ def compute_odds(matrix, succeed_chance, payment, reward):
 	print(weighted_sum)
 
 
-def simulate(success_chance, cost, reward, number,starting):
+def simulate(success_chance, cost, reward, number, starting, level):
 	tris_made = 0
 	money = starting
 	avg_tries = 0
 	pri_success_chance = success_chance[0]
 	duo_success_chance = success_chance[1]
 	tri_success_chance = success_chance[2]
+	tet_success_chance = success_chance[3]
 
 	base_cost = cost[0]
 	pri_concs_cost = cost[1]
 	duo_concs_cost = cost[2]
 	tri_concs_cost = cost[3]
+	tet_concs_cost = cost[4]
 
 	while(tris_made < number):
 		pri_failed = False
@@ -83,11 +85,17 @@ def simulate(success_chance, cost, reward, number,starting):
 			if duo_roll <= 1 - duo_success_chance:
 				continue
 
-			tri_roll = random.random()
-			clicks += 1
-			money += tri_concs_cost
-			if tri_roll <= 1 - tri_success_chance:
-				continue
+			# tri_roll = random.random()
+			# clicks += 1
+			# money += tri_concs_cost
+			# if tri_roll <= 1 - tri_success_chance:
+			# 	continue
+
+			# tet_roll = random.random()
+			# clicks += 1
+			# money += tet_concs_cost
+			# if tet_roll <= 1 - tet_success_chance:
+			# 	continue
 
 			break
 		avg_tries += clicks
@@ -98,13 +106,15 @@ def simulate(success_chance, cost, reward, number,starting):
 	return money, avg_tries/number
 
 concs_price = 7.85
+black_gem = .480
 starting_money = 26000
 lives = 10000
 cur = 0
 deaths = 0
 avg_net = []
 while (cur < lives):
-	money, avgg = simulate([.75,.45,.3],[-250,concs_price * -10,concs_price * -12,concs_price * -13], 4000*.85, number=100,starting=starting_money)
+	#money, avgg = simulate([.75,.45,.3],[-250,concs_price * -10,concs_price * -12,concs_price * -13], 4000*.85, number=100,starting=starting_money)
+	money, avgg = simulate([.70,.40,.3,.2],[-1,black_gem*-1,black_gem* -2,black_gem* -3,black_gem*-4], 47*.85, number=100,starting=starting_money,level=4)
 	#exit(1)
 	if money == -1 and avgg == -1:
 		deaths += 1
@@ -112,6 +122,7 @@ while (cur < lives):
 		avg_net.append(money-starting_money)
 	cur += 1
 print("died: ", deaths, " out of: ", lives)
+print("average net: ", sum(avg_net)/(lives-deaths))
 
 neg_count = 0
 i = 0
