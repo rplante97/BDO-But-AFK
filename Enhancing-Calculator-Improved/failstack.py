@@ -85,5 +85,7 @@ REBLATH_18 = 6.09
 REBLATH_21 = 8.049
 REBLATH_24 = 10.549
 
-
-
+#BASE CHANCES
+#base_chance, increase_per_fs, softcap_increase_per_fs, softcap_fs, added_fs, downgrade_name, upgrade_name
+duo_base = 0.0769
+duo_increase = 0.0077
