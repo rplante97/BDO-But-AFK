@@ -73,6 +73,8 @@ def update_prices(filename):
     with open(filename, 'wb') as file_handler:
         pickle.dump(prices, file_handler)
 
+    #print(prices)
+
 prices_file = 'prices.pk'
 # ONLY RUN TO UPDATE STALE PRICES
 #update_prices(prices_file) #API is SLOW ~1 min to fetch all prices
