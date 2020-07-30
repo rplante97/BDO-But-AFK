@@ -92,7 +92,7 @@ def cron_pen(cost_dict, pen_details):
 	for i in cost_dict.keys():
 		cur_odds = i*pen_details[3] + pen_details[2]
 		#print(i)
-		cost = pen_details[10] - 2 -10
+		cost = pen_details[10] - 2 - 13
 		reward = pen_details[-2]
 
 		expected_cost = cost / cur_odds
@@ -125,16 +125,16 @@ def cron_pen(cost_dict, pen_details):
 
 pen_db = {}
 #cost, name_of_success, base_chance, chance_growth, click_cost, stack_growth, down-grade name, stack softcap, post softcap gfain, pen price, cron(mil)
-pen_db['leebur'] = [1850, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 18100, -429*.8725]
-pen_db['urugon'] = [2390, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 17200, -493*.8725]
-pen_db['muskan'] = [1550, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 17700, -429*.8725]
-pen_db['dim tree'] = [2010, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 18400, -493*.8725]
-pen_db['red nose'] = [1630, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 17300, -429*.8725]
-pen_db['kzarka'] = [1430, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 16100, -531*.8725]
-pen_db['dande'] = [1670, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 15500, -611*.8725]
-pen_db['kutum'] = [1800, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 18600, -531*.8725]
-pen_db['nouver'] = [1590, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0, 14100, -531*.8725]
-
+pen_db['leebur'] = [1850, 'pen_boss', .003, .0003, 2+10*1.3, 6, 'tri_boss', 2324, 0, 17700, -429*.8725]
+pen_db['urugon'] = [2390, 'pen_boss', .003, .0003, 2+10*1.3, 6, 'tri_boss', 2324, 0, 17200, -493*.8725]
+pen_db['muskan'] = [1550, 'pen_boss', .003, .0003, 2+10*1.3, 6, 'tri_boss', 2324, 0, 15700, -429*.8725]
+pen_db['dim tree'] = [2010, 'pen_boss', .003, .0003, 2+10*1.3, 6, 'tri_boss', 2324, 0, 18400, -493*.8725]
+pen_db['red nose'] = [1630, 'pen_boss', .003, .0003, 2+10*1.3, 6, 'tri_boss', 2324, 0, 17300, -429*.8725]
+pen_db['kzarka'] = [1430, 'pen_boss', .003, .0003, 2+10*1.3, 6, 'tri_boss', 2324, 0, 16100, -531*.8725]
+pen_db['dande'] = [1670, 'pen_boss', .003, .0003, 2+10*1.3, 6, 'tri_boss', 2324, 0, 15500, -611*.8725]
+pen_db['kutum'] = [1800, 'pen_boss', .003, .0003, 2+10*1.3, 6, 'tri_boss', 2324, 0, 18600, -531*.8725]
+pen_db['nouver'] = [1590, 'pen_boss', .003, .0003, 2+10*1.3, 6, 'tri_boss', 2324, 0, 14100, -531*.8725]
+pen_db['blackstar'] = [3000, 'pen_boss', .0051, .0005, 2+20*1.3, 5, 'duo_blackstar', 2324, 0, 15000, -591*.8725]
 print(cron_pen(cost_dict, pen_db['leebur']))
 
 def rank_pens(pen_db, cost_dict):
@@ -151,4 +151,44 @@ def rank_pens(pen_db, cost_dict):
 
 rank_pens(pen_db, cost_dict)
 #order = ['pri_grunil', 'duo_grunil', 'tri_grunil', 'tet_grunil', 'pen_grunil']
+acc_db = {}
+acc_db['ogre'] =
+def acc(cost_dict, acc_details ,cron=False):
+	#db['tet_boss'] = [1990, 'pen_boss', .003, .0003, 2+10, 6, 'tri_boss', 2324, 0]
+	best_stack = 0
+	best_profit = 0
+	best_clicks = 0
+	best_cost = 0
+	first = True
+	for i in cost_dict.keys():
+		cur_odds = i*pen_details[3] + pen_details[2]
+		#print(i)
+		cost = pen_details[10] - 2 - 13
+		reward = pen_details[-2]
 
+		expected_cost = cost / cur_odds
+
+		additional_expenses = -cost_dict[i] - pen_details[0]*.85
+
+		overall_cost = expected_cost + additional_expenses
+
+		#print("cost: ", overall_cost)
+
+		profit = reward * .85  + overall_cost
+
+		#print("profit: ", profit)
+
+		if first == True:
+			best_stack = i
+			best_profit = profit
+			best_clicks = 1/cur_odds
+			best_cost = -1*overall_cost
+			first = False
+		else:
+			if best_profit < profit:
+				#print(best_profit, profit)
+				best_profit = profit
+				best_stack = i
+				best_clicks = 1/cur_odds
+				best_cost = -1*overall_cost
+	return best_profit, best_cost, best_clicks, best_stack
