@@ -3,17 +3,25 @@ import random
 import time
 import pickle
 import sys
+import numpy as np
 
+reblath_17 = 5.89
 reblath_18 = 6.09
 reblath_21 = 8.049 #mil
 reblath_24 = 10.549 #mil
 
 db = {}
-db['pri_grunil'] = [30.2, 'duo_grunil', .0769, .0077, 2, 3, None, 82, .00155] #cost, name_of_success, base_chance, chance_growth, click_cost, stack_growth, down-grade name, stack softcap, post softcap gfain
+db['pri_grunil'] = [0, 'duo_grunil', .0769, .0077, 2, 3, None, 82, .00155] #cost, name_of_success, base_chance, chance_growth, click_cost, stack_growth, down-grade name, stack softcap, post softcap gfain
 db['duo_grunil'] = [41.5, 'tri_grunil', .0625, .00625, 2, 4, 'pri_grunil', 102, .00125]
 db['tri_grunil'] = [102, 'tet_grunil', .02, .002, 2, 5, 'duo_grunil', 340, 0]
 db['tet_grunil'] = [455, 'pen_grunil', .003, .0003, 2, 6, 'tri_grunil', 2324, 0]
 db['pen_grunil'] = [2840, 'NA', 0, 0, 0, 0, None]
+
+#db['pri_reblath'] = [7, 'duo_reblath', .0769, .0077, 2, 3, None, 82, .00155] #cost, name_of_success, base_chance, chance_growth, click_cost, stack_growth, down-grade name, stack softcap, post softcap gfain
+#db['duo_reblath'] = [11.56, 'tri_reblath', .0625, .00625, 2, 4, 'pri_reblath', 102, .00125]
+#db['tri_reblath'] = [18.08, 'tet_reblath', .02, .002, 2, 5, 'duo_reblath', 340, 0]
+#db['tet_reblath'] = [50.47, 'pen_reblath', .003, .0003, 2, 6, 'tri_reblath', 2324, 0]
+#db['pen_reblath'] = [3500, 'NA', 0, 0, 0, 0, None]
 
 db['pri_leebur'] = [520, 'duo_leebur', .077, .0077, 2+10*1.3, 3, None, 82, .00155] #cost, name_of_success, base_chance, chance_growth, click_cost, stack_growth
 db['pri_dimtree'] = [520, 'duo_dimtree', .077, .0077, 2+10*1.3, 3, None, 82, .00155]
@@ -72,7 +80,46 @@ pen_db['tet_kzarka'] = [1430, 'pen_boss', .003, .0003, 2+10*1.3*1.3, 6, 'tri_bos
 pen_db['tet_dande'] = [1670, 'pen_boss', .003, .0003, 2+10*1.3*1.3, 6, 'tri_boss', 2324, 0, 15500, -611*.8725]
 pen_db['tet_kutum'] = [1800, 'pen_boss', .003, .0003, 2+10*1.3*1.3, 6, 'tri_boss', 2324, 0, 18600, -531*.8725]
 pen_db['tet_nouver'] = [1590, 'pen_boss', .003, .0003, 2+10*1.3*1.3, 6, 'tri_boss', 2324, 0, 14100, -531*.8725]
+pen_db['tet_griffon'] = [1590, 'pen_boss', .003, .0003, 2+10*1.3*1.3, 6, 'tri_boss', 2324, 0, 14100, -429*.8725]
 pen_db['tri_blackstar'] = [3000, 'pen_boss', .0051, .0005, 2+20*1.3, 5, 'duo_blackstar', 2324, 0, 15000, -591*.8725]
+
+
+acc_db = {}
+#price, 'success_name', 'down_grade_name', 'upgrade name', base chance, chance_growth, softcap, post-softcap growth, crons
+acc_db['base_ogre'] = [0, 'pri_ogre', 'NA', 'base_ogre', .25, .025, 18, .0005, 0]
+acc_db['pri_ogre'] = [0, 'duo_ogre', 'base_ogre', 'base_ogre', .1, .01, 40, .0002, -142]
+acc_db['duo_ogre'] = [0, 'tri_ogre', 'pri_ogre', 'base_ogre', .075, .0075, 44, .00015, -427]
+acc_db['tri_ogre'] = [0, 'tet_ogre', 'duo_ogre', 'base_ogre', .025, .0025, 110, .00005, -1187]
+acc_db['tet_ogre'] = [0, 'pen_ogre', 'tri_ogre', 'base_ogre', .005, .0005, 2340, .00005, -5699]
+acc_db['pen_ogre'] = [0, 'NA', 'NA', 'NA', 0, 0, 0, 0]
+
+acc_db['base_distortion'] = [0, 'pri_distortion', 'NA', 'base_distortion', .25, .025, 18, .0005, 0]
+acc_db['pri_distortion'] = [0, 'duo_distortion', 'base_distortion', 'base_distortion', .1, .01, 40, .0002, -187]
+acc_db['duo_distortion'] = [0, 'tri_distortion', 'pri_distortion', 'base_distortion', .075, .0075, 44, .00015, -562]
+acc_db['tri_distortion'] = [0, 'tet_distortion', 'duo_distortion', 'base_distortion', .025, .0025, 110, .00005, -1562]
+acc_db['tet_distortion'] = [0, 'pen_distortion', 'tri_distortion', 'base_distortion', .005, .0005, 2340, .00005, -7499]
+acc_db['pen_distortion'] = [0, 'NA', 'NA', 'NA', 0, 0, 0, 0]
+
+acc_db['base_laytenn'] = [0, 'pri_laytenn', 'NA', 'base_laytenn', .25, .025, 18, .0005, 0]
+acc_db['pri_laytenn'] = [0, 'duo_laytenn', 'base_laytenn', 'base_laytenn', .1, .01, 40, .0002, -142]
+acc_db['duo_laytenn'] = [0, 'tri_laytenn', 'pri_laytenn', 'base_laytenn', .075, .0075, 44, .00015, -427]
+acc_db['tri_laytenn'] = [0, 'tet_laytenn', 'duo_laytenn', 'base_laytenn', .025, .0025, 110, .00005, -1187]
+acc_db['tet_laytenn'] = [0, 'pen_laytenn', 'tri_laytenn', 'base_laytenn', .005, .0005, 2340, .00005, -5699]
+acc_db['pen_laytenn'] = [0, 'NA', 'NA', 'NA', 0, 0, 0, 0]
+
+acc_db['base_tungrad_ring'] = [0, 'pri_tungrad_ring', 'NA', 'base_tungrad_ring', .25, .025, 18, .0005, 0]
+acc_db['pri_tungrad_ring'] = [0, 'duo_tungrad_ring', 'base_tungrad_ring', 'base_tungrad_ring', .1, .01, 40, .0002, -187]
+acc_db['duo_tungrad_ring'] = [0, 'tri_tungrad_ring', 'pri_tungrad_ring', 'base_tungrad_ring', .075, .0075, 44, .00015, -562]
+acc_db['tri_tungrad_ring'] = [0, 'tet_tungrad_ring', 'duo_tungrad_ring', 'base_tungrad_ring', .025, .0025, 110, .00005, -1562]
+acc_db['tet_tungrad_ring'] = [0, 'pen_tungrad_ring', 'tri_tungrad_ring', 'base_tungrad_ring', .005, .0005, 2340, .00005, -7499]
+acc_db['pen_tungrad_ring'] = [0, 'NA', 'NA', 'NA', 0, 0, 0, 0]
+
+acc_db['base_tungrad_belt'] = [0, 'pri_tungrad_belt', 'NA', 'base_tungrad_belt', .25, .025, 18, .0005, 0]
+acc_db['pri_tungrad_belt'] = [0, 'duo_tungrad_belt', 'base_tungrad_belt', 'base_tungrad_belt', .1, .01, 40, .0002, -187]
+acc_db['duo_tungrad_belt'] = [0, 'tri_tungrad_belt', 'pri_tungrad_belt', 'base_tungrad_belt', .075, .0075, 44, .00015, -562]
+acc_db['tri_tungrad_belt'] = [0, 'tet_tungrad_belt', 'duo_tungrad_belt', 'base_tungrad_belt', .025, .0025, 110, .00005, -1562]
+acc_db['tet_tungrad_belt'] = [0, 'pen_tungrad_belt', 'tri_tungrad_belt', 'base_tungrad_belt', .005, .0005, 2340, .00005, -7499]
+acc_db['pen_tungrad_belt'] = [0, 'NA', 'NA', 'NA', 0, 0, 0, 0]
 
 def update_db(database, prices):
 	'''
@@ -80,6 +127,7 @@ def update_db(database, prices):
 	prices = prices dictionary from udpate_prices
 	'''
 	for i in database.keys():
+		#print(i)
 		if i in prices:
 			database[i][0] = prices[i]/1000000
 
@@ -159,6 +207,46 @@ def update_prices(filename):
 	prices['tet_leebur'] = requests.get("https://omegapepega.com/na/Leebur's%20Gloves/19", headers={'Connection': 'close'}).json()['pricePerOne']
 	prices['pen_leebur'] = requests.get("https://omegapepega.com/na/Leebur's%20Gloves/20", headers={'Connection': 'close'}).json()['pricePerOne']
 
+	print("Updating ogre ring prices")
+	prices['base_ogre'] = requests.get("https://omegapepega.com/na/11607/0", headers={'Connection': 'close'}).json()['pricePerOne']
+	prices['pri_ogre'] = requests.get("https://omegapepega.com/na/11607/1", headers={'Connection': 'close'}).json()['pricePerOne']
+	prices['duo_ogre'] = requests.get("https://omegapepega.com/na/11607/2", headers={'Connection': 'close'}).json()['pricePerOne']
+	prices['tri_ogre'] = requests.get("https://omegapepega.com/na/11607/3", headers={'Connection': 'close'}).json()['pricePerOne']
+	prices['tet_ogre'] = requests.get("https://omegapepega.com/na/11607/4", headers={'Connection': 'close'}).json()['pricePerOne']
+	prices['pen_ogre'] = requests.get("https://omegapepega.com/na/11607/5", headers={'Connection': 'close'}).json()['pricePerOne']
+
+	print("Updating Layten prices")
+	prices['base_laytenn'] = requests.get("https://omegapepega.com/na/11630/0", headers={'Connection': 'close'}).json()['pricePerOne']
+	prices['pri_laytenn'] = requests.get("https://omegapepega.com/na/11630/1", headers={'Connection': 'close'}).json()['pricePerOne']
+	prices['duo_laytenn'] = requests.get("https://omegapepega.com/na/11630/2", headers={'Connection': 'close'}).json()['pricePerOne']
+	prices['tri_laytenn'] = requests.get("https://omegapepega.com/na/11630/3", headers={'Connection': 'close'}).json()['pricePerOne']
+	prices['tet_laytenn'] = requests.get("https://omegapepega.com/na/11630/4", headers={'Connection': 'close'}).json()['pricePerOne']
+	prices['pen_laytenn'] = requests.get("https://omegapepega.com/na/11630/5", headers={'Connection': 'close'}).json()['pricePerOne']
+
+	print("Updating distortion prices")
+	prices['base_distortion'] = requests.get("https://omegapepega.com/na/11853/0", headers={'Connection': 'close'}).json()['pricePerOne']
+	prices['pri_distortion'] = requests.get("https://omegapepega.com/na/11853/1", headers={'Connection': 'close'}).json()['pricePerOne']
+	prices['duo_distortion'] = requests.get("https://omegapepega.com/na/11853/2", headers={'Connection': 'close'}).json()['pricePerOne']
+	prices['tri_distortion'] = requests.get("https://omegapepega.com/na/11853/3", headers={'Connection': 'close'}).json()['pricePerOne']
+	prices['tet_distortion'] = requests.get("https://omegapepega.com/na/11853/4", headers={'Connection': 'close'}).json()['pricePerOne']
+	prices['pen_distortion'] = requests.get("https://omegapepega.com/na/11853/5", headers={'Connection': 'close'}).json()['pricePerOne']
+
+	print("Updating Tungrad ring prices")
+	prices['base_tungrad_ring'] = requests.get("https://omegapepega.com/na/12061/0", headers={'Connection': 'close'}).json()['pricePerOne']
+	prices['pri_tungrad_ring'] = requests.get("https://omegapepega.com/na/12061/1", headers={'Connection': 'close'}).json()['pricePerOne']
+	prices['duo_tungrad_ring'] = requests.get("https://omegapepega.com/na/12061/2", headers={'Connection': 'close'}).json()['pricePerOne']
+	prices['tri_tungrad_ring'] = requests.get("https://omegapepega.com/na/12061/3", headers={'Connection': 'close'}).json()['pricePerOne']
+	prices['tet_tungrad_ring'] = requests.get("https://omegapepega.com/na/12061/4", headers={'Connection': 'close'}).json()['pricePerOne']
+	prices['pen_tungrad_ring'] = requests.get("https://omegapepega.com/na/12061/5", headers={'Connection': 'close'}).json()['pricePerOne']
+
+	print("Updating tungrad_belt prices")
+	prices['base_tungrad_belt'] = requests.get("https://omegapepega.com/na/12237/0", headers={'Connection': 'close'}).json()['pricePerOne']
+	prices['pri_tungrad_belt'] = requests.get("https://omegapepega.com/na/12237/1", headers={'Connection': 'close'}).json()['pricePerOne']
+	prices['duo_tungrad_belt'] = requests.get("https://omegapepega.com/na/12237/2", headers={'Connection': 'close'}).json()['pricePerOne']
+	prices['tri_tungrad_belt'] = requests.get("https://omegapepega.com/na/12237/3", headers={'Connection': 'close'}).json()['pricePerOne']
+	prices['tet_tungrad_belt'] = requests.get("https://omegapepega.com/na/12237/4", headers={'Connection': 'close'}).json()['pricePerOne']
+	prices['pen_tungrad_belt'] = requests.get("https://omegapepega.com/na/12237/5", headers={'Connection': 'close'}).json()['pricePerOne']
+
 	with open(filename, 'wb') as file_handler:
 	    pickle.dump(prices, file_handler)
 
@@ -173,55 +261,67 @@ def update_prices(filename):
 
 def grunil_break_points(order):
 	tax = 0.85
+	conc_cost = 2
 	fail_repair_cost = 0.34
 	cur_stack = 18
 	stack_cost = reblath_18
 	cost_dict = {}
+	current_index = 0
+	just_incremented = True
 	while(cur_stack < 200):
-		current_index = 0
 		best_index = 0
 		best_cost = 0
 		best_list = []
-		while(current_index < len(order)):
-			if "grunil" not in order[current_index] or "pen_" in order[current_index]:
-				current_index += 1
+		i = current_index
+		while(i < i + 1):
+			#change it so it only attempts the current item and the item next to it
+			if "grunil" not in order[i] or "pen_" in order[i]:
+				i += 1
 				continue
-			current_list = db[order[current_index]]
+			current_list = db[order[i]]
 			over_soft_cap = max(0,cur_stack - current_list[7])
 			current_success_chance = over_soft_cap*current_list[8] + (cur_stack-over_soft_cap)*current_list[3] + current_list[2]
-			current_success_cost = current_list[4] + stack_cost - (db[current_list[1]][0]*tax - current_list[0])
+			if just_incremented == True:
+				db[order[current_index+1]][0] = current_list[0] + stack_cost + (conc_cost+fail_repair_cost)/current_success_chance
+			success_gain = -1 * (db[current_list[1]][0]*tax - current_list[0])
+			current_success_cost = current_list[4] + stack_cost + success_gain
 			#print("succ: cost", current_success_cost)
 			current_fail_cost = current_list[4]
-			if 'grunil' in order[current_index]:
-				current_fail_cost += 0.35
 
 			if current_list[6] != None: #aka item can downgrade upon failure
 				current_fail_cost += (current_list[0] - db[current_list[6]][0])
 			#print("fail: cost", current_fail_cost)
 			#cost_to_add = (stack_cost + current_fail_cost)/(1-current_success_chance) - (current_success_chance/(1-current_success_chance)*current_success_cost)
-			current_cost = ((current_success_chance*current_success_cost + (1 - current_success_chance)*current_fail_cost))/(1-current_success_chance)/current_list[5]
-
+			current_cost = round(((current_success_chance*current_success_cost + (1 - current_success_chance)*current_fail_cost))/(1-current_success_chance)/current_list[5],2)
+			if current_cost < 0:
+				current_cost = 2
 			#if order[current_index] == 'pri_grunil':
 			#print("")
-			#print(" name: ", order[current_index], " cost: ", round(current_cost,2))
-			#print(" succ_chance: ", current_success_chance)
-			#print(" succ_cost: ", current_success_cost)
-			#print(" fail_cost: ", current_fail_cost)
+			print(" name: ", order[i], " cost: ", round(current_cost,2))
+			print("item price: ", current_list[0])
+			print("success price: ", db[current_list[1]][0])
+			print("success_gain: ", success_gain * current_success_chance)
+			print(" succ_chance: ", current_success_chance)
+			print(" succ_cost: ", current_success_cost)
+			print(" fail_cost: ", current_fail_cost)
 			if current_index == 0:
 				best_index = 0
 				best_cost = current_cost
 				best_list = current_list
+				just_incremented = False
 			else:
 				if current_cost < best_cost:
 					#print("swapping ", order[best_index], " for ", order[current_index])
 					best_cost = current_cost
-					best_index = current_index
+					best_index = i
 					best_list = current_list
+					current_index += 1
+					break
 					#best_cost_to_add = cost_to_add
-			current_index += 1
+			i += 1
 
 		print(cur_stack, " costs: ", round(stack_cost,2), " || ", order[best_index], "= ", round(best_cost,2), "mil per stack ||")
-		if cur_stack > 100:
+		if cur_stack > 0:
 			cost_dict[cur_stack] = stack_cost
 		cur_stack += best_list[5]
 		stack_cost += best_cost*best_list[5]
@@ -229,6 +329,68 @@ def grunil_break_points(order):
 
 #cost_dict = grunil_break_points(order = ['pri_boss', 'duo_boss', 'tet_boss','pri_grunil', 'duo_grunil', 'tri_grunil', 'tet_grunil'])
 
+def grunil_fs_cost(db, stop_points):
+	tax = 0.85
+	conc_cost = 2
+	fail_repair_cost = 0.34
+	cur_stack = 17
+	repair_cost = .4
+	stack_cost = reblath_17
+
+	order = ['pri_grunil', 'duo_grunil', 'tri_grunil', 'tet_grunil','pen_grunil']
+	#PRI grunil || db['pri_grunil'] = [30.2, 'duo_grunil', .0769, .0077, 2, 3, None, 82, .00155]
+	for i in range(len(order)-1):
+		cur_stack = stop_points[i][0]
+		#computing the cost of the next item from enhancement
+		success_name = order[i+1]
+		#print("aa", order[i])
+		#print("**", db['duo_grunil'])
+		stack_gain = db[order[i]][5]
+		base_chance = db[order[i]][2]
+		growth_chance = db[order[i]][3]
+		stop_stack = stop_points[i][1]
+		costs_per_attempt = []
+		chances_per_attempt = []
+		stack_cost_iter = stack_cost
+		cur_stack_iter = cur_stack
+		conc_repair_accumulator = 0
+		while(cur_stack_iter < stop_stack):
+			success_chance = round(base_chance + cur_stack_iter * growth_chance, 6)
+			chances_per_attempt.append(success_chance)
+			conc_repair_accumulator += conc_cost+repair_cost
+			costs_per_attempt.append(round(success_chance*conc_repair_accumulator, 6))
+			cur_stack_iter += stack_gain
+		#print(costs_per_attempt)
+		costs_per_attempt = np.asarray(costs_per_attempt)
+		print(order[i], costs_per_attempt)
+		print("ind chance: ", (chances_per_attempt))
+		expected_next_level_cost = round(np.sum(costs_per_attempt)/np.sum(chances_per_attempt), 6)
+		print("enhance_cost: ", expected_next_level_cost)
+		if order[i+1] != 'pen_grunil':
+			db[order[i+1]][0] = db[order[i]][0] + expected_next_level_cost + stack_cost
+			print("cost of: ", order[i+1], ' is set to: ', db[order[i+1]][0])
+
+
+		#computing the cost of the next stack breakpoint usingnew item price
+		while(cur_stack < stop_stack):
+			success_chance = base_chance + cur_stack * growth_chance
+			fail_cost = conc_cost+repair_cost+db[order[i]][0]-db[order[max(0,i-1)]][0]
+			success_cost = db[order[i]][0] - db[order[i+1]][0] + stack_cost + conc_cost
+			costt = round(((success_chance*(success_cost)+((1-success_chance)*(fail_cost))/(1-success_chance))),2)
+			print("---------------------")
+			print(cur_stack, costt)
+			print("succ: ", success_cost)
+			print("fail: ", fail_cost)
+			print("overall stack cost: ", stack_cost)
+			cur_stack += stack_gain
+			stack_cost += costt
+			#print(cur_stack, stack_cost)
+	#testing
+	for i in order:
+		print(i, db[i])
+
+grunil_fs_cost(db, [(17,26), (26,46), (56,80), (80,140)])
+exit(1)
 def cron_pen(cost_dict, pen_details):
 	#db['tet_boss'] = [1990, 'pen_boss', .003, .0003, 2+10*1.3, 6, 'tri_boss', 2324, 0]
 	best_stack = 0
@@ -283,28 +445,53 @@ def rank_pens(pen_db, cost_dict):
 	for i in over_all_list:
 		print(i)
 
-def acc(cost_dict, acc_details ,cron=False):
+#price, 'success_name', 'down_grade_name', 'upgrade name', base chance, chance_growth, softcap, post-softcap growth, crons
+def acc(cost_dict, details, acc_dict,cron=False):
+	tax = 0.85
 	best_stack = 0
 	best_profit = 0
 	best_clicks = 0
 	best_cost = 0
 	first = True
+	#print(cost_dict)
 	for i in cost_dict.keys():
-		cur_odds = i*pen_details[3] + pen_details[2]
+		#print(details)
+		cur_stack = i
+		#cur_odds = i*details[5] + details[4]
+		over_soft_cap = max(0,cur_stack - details[6])
+		cur_odds = over_soft_cap*details[7] + (cur_stack-over_soft_cap)*details[5] + details[4]
+		#print("--------------------")
+		#print("cur_stack: ", i)
+		#print("over soft cap: ", over_soft_cap)
+		#print("growth: ", details[5])
+		#print("base: ", details[4])
+		#print("cur_odds: ", cur_odds)
 		#print(i)
-		cost = pen_details[10] - 2 - 13
-		reward = pen_details[-2]
+		cost = acc_dict[details[3]][0]+details[0] #cost of base + cost of current acc * tax
+		#print("cost: ", cost)
+		if cron == True:
+			cost += -0.7*(acc_dict[details[3]][0] + details[0]) + 0.3*(acc_dict[details[2]][0])
 
-		expected_cost = cost / cur_odds
+		reward = -acc_dict[details[1]][0] #cost of reward * tax
 
-		additional_expenses = -cost_dict[i] - pen_details[0]*.85
 
-		overall_cost = expected_cost + additional_expenses
+		expected_cost = cost 
+
+		overall_cost = expected_cost
 
 		#print("cost: ", overall_cost)
 
-		profit = reward * .85  + overall_cost
+		profit = -1*(cur_odds*(reward * tax)  + (overall_cost + cost_dict[i]))
 
+		#print("--------------------")
+		#print("cur_stack: ", i)
+		#print("over soft cap: ", over_soft_cap)
+		#print("growth: ", details[5])
+		#print("base: ", details[4])
+		#print("cur_odds: ", cur_odds)
+		#print(i)
+		#print("cost: ", cost)
+		#print("reward: ", reward)
 		#print("profit: ", profit)
 
 		if first == True:
@@ -322,6 +509,23 @@ def acc(cost_dict, acc_details ,cron=False):
 				best_cost = -1*overall_cost
 	return best_profit, best_cost, best_clicks, best_stack
 
+def rank_acc(cost_dict,acc_dict,cron=False):
+	over_all_list = []
+	#print(acc_dict)
+	for i in acc_dict.keys():
+		#print(acc_dict[i])
+		#exit(1)
+		if "pen" in i or "base" in i:
+			continue
+		profit, cost, clicks, stack = acc(cost_dict, acc_dict[i], acc_dict,cron)
+		cur_list = [i, profit, cost, clicks, stack]
+		over_all_list.append(cur_list)
+	over_all_list.sort(key = lambda x: x[1])
+	over_all_list.reverse()
+
+	for i in over_all_list:
+		print(i)
+
 def main():
 	command = sys.argv[1]
 	prices = {}
@@ -331,20 +535,16 @@ def main():
 	prices_file = 'prices.pk'
 	with open(prices_file, 'rb') as file_handler:
 		prices = pickle.load(file_handler)
-	print("before update")
-	for keys in db:
-		if "grunil" in keys:
-			print(keys,":",db[keys])
-	#update_db(db,prices)
-	update_pen_db(pen_db, prices)
-	print("after update")
-	for keys in db:
-		if "grunil" in keys:
-			print(keys,":",db[keys])
 	#print(pen_db)
 	if command == "rank_pens":
-		print(list(db.keys()))
+		#print(list(db.keys()))
+		update_db(db,prices)
+		update_pen_db(pen_db, prices)
 		cost_dict = grunil_break_points(order = list(db.keys()))
 		rank_pens(pen_db,cost_dict)
-
+	if command == "rank_acc":
+		update_db(db,prices)
+		update_db(acc_db, prices)
+		cost_dict = grunil_break_points(order = list(db.keys()))
+		rank_acc(cost_dict, acc_db)
 main()
