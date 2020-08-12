@@ -16,13 +16,13 @@ fail_counter = [0, 0, 0, 0]
 trials = 100000
 
 for i in range(trials):
-    enhance_level = 0
+    enhance_level = 0 #Reset enhance to 0 after each run
     while enhance_level < 4:
-
+        #Cost per tap is always just the price of disto + amount of crons used
         cost = cost + disto_price + crons[enhance_level]
         if random.random() < success_chance[enhance_level]:
             #Enhance success
-            stack_usage[enhance_level] += 1 #reflect usage of stack
+            stack_usage[enhance_level] += 1 #reflect usage of stack on success
             enhance_level += 1 #increment our enhance level
             
         else:
@@ -30,9 +30,8 @@ for i in range(trials):
             if random.random() < downgrade_chance:
                 #Enhancement caused downgrade
                 fail_counter[enhance_level] += 1
-                if enhance_level > 0:
+                if enhance_level > 0: #Downgrade unless we failed a tap for PRI
                     enhance_level -= 1
-    #    print("Enhance Level: " + str(enhance_level))
 
 print("Total Trials: " + str(trials))
 print("Average Cost: " + str(cost/trials))
