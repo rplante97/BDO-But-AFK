@@ -53,7 +53,7 @@ def stack_pri(base_stack, base_stack_cost, desired_stack, trials):
                 stack += 3
                 reblath_repair += 1
     
-    cost = ((blackstones/trials)*2250000 + (reblath_repair/trials) * 13000)/1000000 + base_count/trials * base_stack_cost
+    cost = ((blackstones/trials)*2250000 + (reblath_repair/trials) * 313000)/1000000 + base_count/trials * base_stack_cost
     avg_cost = cost
     avg_duos = duos/trials
 
@@ -88,7 +88,7 @@ def stack_duo(base_stack, base_stack_cost, base_duo_supply, desired_stack, trial
                 stack += 4
                 reblath_repair += 1
     
-    avg_cost = ((blackstones/trials)*2250000 + (reblath_repair/trials) * 13000)/1000000 + (base_stack_count/trials) * base_stack_cost
+    avg_cost = ((blackstones/trials)*2250000 + (reblath_repair/trials) * 313000)/1000000 + (base_stack_count/trials) * base_stack_cost
     avg_tris = tris/trials
     avg_duo_usage = duos/trials
 
@@ -127,7 +127,7 @@ def stack_tri(base_stack, base_stack_cost, base_duo_supply, base_tri_supply, des
                 stack += 5
                 reblath_repair += 1
     
-    avg_cost = ((blackstones/trials)*2250000 + (reblath_repair/trials) * 13000)/1000000 + base_stack_count/trials * base_stack_cost
+    avg_cost = ((blackstones/trials)*2250000 + (reblath_repair/trials) * 313000)/1000000 + base_stack_count/trials * base_stack_cost
     avg_tets = tets/trials
     avg_tri_usage = tris/trials
     avg_duo_usage = duos/trials
@@ -162,7 +162,7 @@ def stack_tet(base_stack, base_stack_cost, base_tri_supply, base_tet_supply, des
                 stack += 6
                 reblath_repair += 1
     
-    avg_cost = ((blackstones/trials)*2250000 + (reblath_repair/trials) * 13000)/1000000 + base_stack_count/trials * base_stack_cost
+    avg_cost = ((blackstones/trials)*2250000 + (reblath_repair/trials) * 313000)/1000000 + base_stack_count/trials * base_stack_cost
     avg_pens = pens/trials
     avg_tet_usage = tets/trials
     avg_tri_usage = tris/trials
