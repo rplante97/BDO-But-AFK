@@ -9,7 +9,7 @@ base_grunil_price = 0.343 #Pull from API later
 concentrated_price = 2.25 #Pull from API later
 starting_fs = 21 #Base failstack you begin enhancing on
 cost_of_base_fs = 10
-num_pri_grunil = 50 #number of grunil pieces you have to enhance with
+num_pri_grunil = 250 #number of grunil pieces you have to enhance with
 cost_per_click_fail = base_grunil_price + concentrated_price
 cost_per_click_success = concentrated_price + cost_of_base_fs
 fs_per_click = [2, 3, 4, 5] #Failstacks for FAILING TO TAP: duo, tri, tet, pen
@@ -157,7 +157,9 @@ def click(armor_level, armor_level_counts, click_type, stack, cost):
         #else: armor level is 0, so we do not need to update armor counts on failure
     return stack, cost, armor_level_counts
 
-
+# def build_base_stack():
+#     armor_stone_price = 0
+#     reblath_price = 0
 
 #How to seperate random chance from a good enchancing method? Save random seed between trials?
 #How to seperate method of tapping from sustainable tapping i.e no influx of new pris
@@ -171,5 +173,14 @@ def click(armor_level, armor_level_counts, click_type, stack, cost):
 
 #Stacking method could be defined like [pri to duo range, duo to tri range, tri to tet range, tet to pen range]
 
-sustainably_build_fs(30, 100)
+sustainably_build_fs(250, 100)
 #click(duo_to_tri, 120)
+
+#Compute at what stack each boss gear piece would become profitable, tap that when out of stacks to build instead of
+#doing a non optimal grunil stack
+
+#At what chance is pri boss gear money, duo, tri, tet etc.
+#Make function do 100 trials of enhancing X stack to see avg cost
+#Implement functionality for stack saving/swapping on the fly
+
+#Best way to increase stacks from like 90 to 110
