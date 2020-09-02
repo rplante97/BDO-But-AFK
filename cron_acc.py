@@ -36,7 +36,7 @@ if sys.argv[4] == "cron":
 sell_level = int(sys.argv[3])
 clicks = [0,0,0,0]
 rip = 0
-trials = 100000
+trials = 1000
 
 for i in range(trials):
     enhance_level = 0 #Reset enhance to 0 after each run
@@ -72,13 +72,13 @@ for i in range(trials):
 for i in range(len(clicks)):
     clicks[i] = clicks[i]/trials
 
-print(clicks)
+print(stack_usage)
 overall_stack_cost = 0
 for i in range(len(stack_costs)):
-    overall_stack_cost += stack_usage[i]/trials*stack_costs[i]
-print("stack costs: ", overall_stack_cost)
+    overall_stack_cost += stack_usage[i]*stack_costs[i]
+print("average stack costs: ", overall_stack_cost/trials)
 print("Total Trials: " + str(trials))
-print("Average Cost: " + str(total_cost/trials))
+print("average Cost in accs: " + str(total_cost/trials))
 levels = ['PRI', 'DUO', 'TRI', 'TET']
 stack_used = "[Stacks Used (Avg)]: "
 downgrade_rate = "[Downgrade Rate]    "
@@ -89,7 +89,7 @@ while(i < sell_level):
     downgrade_rate += levels[i] + " " +str(downgrade_counter[i]/trials/clicks[i]) + " || "
     failure_rate += levels[i] + " " + str(fail_counter[i]/trials/clicks[i]) + " || "
     i += 1
-print("Profit: ", str((reward * .85) - (total_cost/trials+overall_stack_cost)))
+print("Profit per acc: ", str(reward*0.85 - total_cost/trials - overall_stack_cost/trials))
 print(stack_used)
 print(downgrade_rate)
 print(failure_rate)
