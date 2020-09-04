@@ -346,7 +346,7 @@ def item_fs_cost(start_stack, start_cost, db, stop_points):
 	stack_cost = start_cost
 	#reblath_15 = 4.562
 	#order = ['pri_reblath', 'pri_boss', 'duo_reblath', 'duo_boss', 'tri_reblath', 'tri_boss', 'tet_reblath', 'tet_boss', 'pen_reblath', 'pen_boss']
-	order = ['pri_reblath', 'pri_boss']
+	order = ['pri_reblath']
 	#PRI grunil || db['pri_grunil'] = [30.2, 'duo_grunil', .0769, .0077, 2, 3, None, 82, .00155]
 	for i in range(len(stop_points)):
 		if 'reblath' in order[i]:
@@ -369,69 +369,53 @@ def item_fs_cost(start_stack, start_cost, db, stop_points):
 		base_chance = db[order[i]][2]
 		growth_chance = db[order[i]][3]
 		stop_stack = stop_points[i][1]
-		num_simulations = 1000
-		#simulate making 1000 of the next enhance
+		num_simulations = 10000
+		#simulate making 1000 items of the next enhance
 		num_stacks_1 = 0
 		num_item_1 = 0
-		accumulated_cost_1 = 0
-		while(num_item_1 < num_simulations):
+		accumulated_item_cost = 0
+		accumulated_stack_cost = 0
+		cur_simulation = 0
+		accumulated_cost_total = 0
+		while(cur_simulation < num_simulations):
+			succ_flag = False
 			cur_sim_stack = cur_stack
 			cur_stack_cost = stack_cost
+			accumulated_cost_total += stack_cost
+			print("1: new stack")
 			while(cur_sim_stack < stop_stack):
 				chance = base_chance + cur_sim_stack*growth_chance
 				roll = random.random()
+				accumulated_cost_total += conc_cost
 				if (roll < 1 - chance): #failed enhancement
+					print("1: fail")
 					cur_sim_stack += stack_gain
-					accumulated_cost_1 += repair_cost + conc_cost
+					accumulated_cost_total += repair_cost
+					cur_stack_cost += repair_cost + conc_cost
 				else: #enhancement succeeded
-					accumulated_cost_1 += cur_stack_cost
+					print("1: succ")
+					succ_flag = True
+					accumulated_item_cost += cur_stack_cost + conc_cost
 					num_item_1 += 1
-			num_stacks_1 += 1
+					break
+			if succ_flag == False:
+				accumulated_stack_cost += cur_stack_cost
+				num_stacks_1 += 1
+			cur_simulation += 1
 			#print(num_item)
 		print("-----------------------------------------")
-		print("repair cost: ", repair_cost)
+		print("num_simulations: ", num_simulations)
 		print("creating items simulation results: ")
 		print("number of created items: ", num_item_1)
 		print("number of created stacks: ", num_stacks_1)
-		print("overall silver spent (mil) ", accumulated_cost_1)
-		num_stacks_2 = 0
-		num_item_2 = 0
-		accumulated_cost_2 = 0
-		while(num_stacks_2 < num_simulations):
-			cur_sim_stack = cur_stack
-			cur_stack_cost = stack_cost
-			while(cur_sim_stack < stop_stack):
-				chance = base_chance + cur_sim_stack*growth_chance
-				roll = random.random()
-				if (roll < 1 - chance):
-					cur_sim_stack += stack_gain
-					accumulated_cost_2 += repair_cost + conc_cost
-				else:
-					accumulated_cost_2 += cur_stack_cost
-					num_item_2 += 1
-			num_stacks_2 += 1
-			#print(num_item)
+		print("total money spent: ", accumulated_cost_total)
+		print("accumulated item cost: ", accumulated_item_cost)
+		print("accumualted stack cost: ", accumulated_stack_cost)
 		print("")
-		print("creating stacks simulation results: ")
-		print("number of created items: ", num_item_2)
-		print("number of created stacks: ", num_stacks_2)
-		print("overall silver spent (mil) ", accumulated_cost_2)
-		A = np.asarray([[num_item_1, num_stacks_1], [num_item_2, num_stacks_2]])
-		b = np.asarray([accumulated_cost_1, accumulated_cost_2])
-		print("")
-		print("Solving system of EQ results: ")
-		print("A: ", A)
-		print("b: ", b)
-
-		x = np.linalg.solve(A, b)
-		print("Cost of ", success_name, " is ", x[0])
-		print("Cost of ", stop_stack, " stack is ", x[1])
+		print("Cost of ", success_name, ":", accumulated_item_cost/num_item_1)
+		print("Cost of ", stop_stack, ":", accumulated_stack_cost/num_stacks_1)
 
 
-	#testing
-	for i in order:
-		if i != 'valks':
-			print(i, db[i])
 pri_reblath = (15, 27)
 pri_boss = (pri_reblath[1], 32)
 duo_reblath = (pri_boss[1], 44)
