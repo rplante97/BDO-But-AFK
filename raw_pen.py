@@ -12,7 +12,7 @@ stack_gain = 6
 
 
 cur = 0
-trials = 10000
+trials = 100000
 total_clicks = []
 stack_popped = []
 
@@ -35,7 +35,7 @@ print(np.sum(total_clicks)/len(total_clicks))
 plt.hist(total_clicks,bins=30)
 plt.show()
 
-plt.hist(stack_popped)
+plt.hist(stack_popped,bins=30)
 plt.show()
 
 
