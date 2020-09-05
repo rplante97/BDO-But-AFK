@@ -5,22 +5,23 @@ import pickle
 import sys
 import numpy as np
 
+reblath_15 = 4.562
 reblath_17 = 5.89
 reblath_18 = 6.09
 reblath_21 = 8.049 #mil
 reblath_24 = 10.549 #mil
 
 db = {}
-db['pri_grunil'] = [0, 'duo_grunil', .0769, .0077, 2, 3, 'pri_grunil', 82, .00155] #cost, name_of_success, base_chance, chance_growth, click_cost, stack_growth, down-grade name, stack softcap, post softcap gfain
-db['duo_grunil'] = [41.5, 'tri_grunil', .0625, .00625, 2, 4, 'pri_grunil', 102, .00125]
-db['tri_grunil'] = [102, 'tet_grunil', .02, .002, 2, 5, 'duo_grunil', 340, 0]
-db['tet_grunil'] = [455, 'pen_grunil', .003, .0003, 2, 6, 'tri_grunil', 2324, 0]
-db['pen_grunil'] = [2840, 'NA', 0, 0, 0, 0, None]
+db['pri_reblath'] = [0, 'duo_reblath', .0769, .0077, 2, 3, 'pri_reblath', 82, .00155] #cost, name_of_success, base_chance, chance_growth, click_cost, stack_growth, down-grade name, stack softcap, post softcap gfain
+db['duo_reblath'] = [41.5, 'tri_reblath', .0625, .00625, 2, 4, 'pri_reblath', 102, .00125]
+db['tri_reblath'] = [102, 'tet_reblath', .02, .002, 2, 5, 'duo_reblath', 340, 0]
+db['tet_reblath'] = [455, 'pen_reblath', .003, .0003, 2, 6, 'tri_reblath', 2324, 0]
+db['pen_reblath'] = [2840, 'NA', 0, 0, 0, 0, None]
 
-db['pri_boss'] = [0, 'duo_boss', .0769, .0077, 2 + 10, 3, 'pri_boss', 82, .00155] #cost, name_of_success, base_chance, chance_growth, click_cost, stack_growth, down-grade name, stack softcap, post softcap gfain
-db['duo_boss'] = [41.5, 'tri_boss', .0625, .00625, 2 + 10, 4, 'pri_boss', 102, .00125]
-db['tri_boss'] = [102, 'tet_boss', .02, .002, 2 + 10, 5, 'duo_boss', 340, 0]
-db['tet_boss'] = [455, 'pen_boss', .003, .0003, 2 + 10, 6, 'tri_boss', 2324, 0]
+db['pri_boss'] = [0, 'duo_boss', .0769, .0077, 2 + 10*1.5, 3, 'pri_boss', 82, .00155] #cost, name_of_success, base_chance, chance_growth, click_cost, stack_growth, down-grade name, stack softcap, post softcap gfain
+db['duo_boss'] = [41.5, 'tri_boss', .0625, .00625, 2 + 10*1.5, 4, 'pri_boss', 102, .00125]
+db['tri_boss'] = [102, 'tet_boss', .02, .002, 2 + 10*1.5, 5, 'duo_boss', 340, 0]
+db['tet_boss'] = [455, 'pen_boss', .003, .0003, 2 + 10*1.5, 6, 'tri_boss', 2324, 0]
 db['pen_boss'] = [17000, 'NA', 0, 0, 0, 0, None]
 
 #db['pri_reblath'] = [7, 'duo_reblath', .0769, .0077, 2, 3, None, 82, .00155] #cost, name_of_success, base_chance, chance_growth, click_cost, stack_growth, down-grade name, stack softcap, post softcap gfain
@@ -335,20 +336,21 @@ def grunil_break_points(order):
 
 #cost_dict = grunil_break_points(order = ['pri_boss', 'duo_boss', 'tet_boss','pri_grunil', 'duo_grunil', 'tri_grunil', 'tet_grunil'])
 
-def grunil_fs_cost(db, stop_points):
+def item_fs_cost(start_stack, start_cost, db, stop_points):
 	tax = 0.85
 	conc_cost = 2
-	grunil_repair_cost = 0.34
+	reblath_repair_cost = 0.012
 	boss_repair_cost = 10*1.3
 	repair_cost = 0
-	cur_stack = 17
-	stack_cost = reblath_17
-
-	order = ['pri_grunil', 'pri_boss', 'duo_grunil', 'duo_boss', 'valks', 'tri_grunil', 'tri_boss', 'tet_grunil', 'tet_boss', 'pen_grunil', 'pen_boss']
+	cur_stack = start_stack
+	stack_cost = start_cost
+	#reblath_15 = 4.562
+	#order = ['pri_reblath', 'pri_boss', 'duo_reblath', 'duo_boss', 'tri_reblath', 'tri_boss', 'tet_reblath', 'tet_boss', 'pen_reblath', 'pen_boss']
+	order = ['pri_reblath']
 	#PRI grunil || db['pri_grunil'] = [30.2, 'duo_grunil', .0769, .0077, 2, 3, None, 82, .00155]
 	for i in range(len(stop_points)):
-		if 'grunil' in order[i]:
-			repair_cost = grunil_repair_cost
+		if 'reblath' in order[i]:
+			repair_cost = reblath_repair_cost
 		elif 'boss' in order[i]:
 			repair_cost = boss_repair_cost
 
@@ -357,8 +359,8 @@ def grunil_fs_cost(db, stop_points):
 		if order[i] == 'valks':
 			cur_stack += 10
 			continue
+
 		#computing the cost of the next item from enhancement
-		current_item_cost = db[order[i]][0]
 		success_name = db[order[i]][1]
 		fail_name = db[order[i]][6]
 		#print("aa", order[i])
@@ -367,59 +369,62 @@ def grunil_fs_cost(db, stop_points):
 		base_chance = db[order[i]][2]
 		growth_chance = db[order[i]][3]
 		stop_stack = stop_points[i][1]
-		costs_per_attempt = []
-		chances_per_attempt = []
-		stack_cost_iter = stack_cost
-		cur_stack_iter = cur_stack
-		conc_repair_accumulator = 0
-		while(cur_stack_iter < stop_stack):
-			success_chance = round(base_chance + cur_stack_iter * growth_chance, 6)
-			chances_per_attempt.append(success_chance)
-			conc_repair_accumulator += conc_cost+repair_cost
-			costs_per_attempt.append(round(success_chance*conc_repair_accumulator, 6))
-			cur_stack_iter += stack_gain
-		#print(costs_per_attempt)
-		costs_per_attempt = np.asarray(costs_per_attempt)
-		print(order[i], costs_per_attempt)
-		print("ind chance: ", (chances_per_attempt))
-		expected_next_level_cost = round(np.sum(costs_per_attempt)/np.sum(chances_per_attempt), 6)
-		print("enhance_cost: ", expected_next_level_cost)
-		print("stack cost: ", stack_cost)
-		print("previous level: ", db[order[i]][0])
-		if "pen_" not in success_name:
-			db[success_name][0] = db[order[i]][0] + expected_next_level_cost + stack_cost
-			print("cost of: ", success_name, ' is set to: ', db[success_name][0])
+		num_simulations = 10000
+		#simulate making 1000 items of the next enhance
+		num_stacks_1 = 0
+		num_item_1 = 0
+		accumulated_item_cost = 0
+		accumulated_stack_cost = 0
+		cur_simulation = 0
+		accumulated_cost_total = 0
+		while(cur_simulation < num_simulations):
+			succ_flag = False
+			cur_sim_stack = cur_stack
+			cur_stack_cost = stack_cost
+			accumulated_cost_total += stack_cost
+			print("1: new stack")
+			while(cur_sim_stack < stop_stack):
+				chance = base_chance + cur_sim_stack*growth_chance
+				roll = random.random()
+				accumulated_cost_total += conc_cost
+				if (roll < 1 - chance): #failed enhancement
+					print("1: fail")
+					cur_sim_stack += stack_gain
+					accumulated_cost_total += repair_cost
+					cur_stack_cost += repair_cost + conc_cost
+				else: #enhancement succeeded
+					print("1: succ")
+					succ_flag = True
+					accumulated_item_cost += cur_stack_cost + conc_cost
+					num_item_1 += 1
+					break
+			if succ_flag == False:
+				accumulated_stack_cost += cur_stack_cost
+				num_stacks_1 += 1
+			cur_simulation += 1
+			#print(num_item)
+		print("-----------------------------------------")
+		print("num_simulations: ", num_simulations)
+		print("creating items simulation results: ")
+		print("number of created items: ", num_item_1)
+		print("number of created stacks: ", num_stacks_1)
+		print("total money spent: ", accumulated_cost_total)
+		print("accumulated item cost: ", accumulated_item_cost)
+		print("accumualted stack cost: ", accumulated_stack_cost)
+		print("")
+		print("Cost of ", success_name, ":", accumulated_item_cost/num_item_1)
+		print("Cost of ", stop_stack, ":", accumulated_stack_cost/num_stacks_1)
 
 
-		#computing the cost of the next stack breakpoint usingnew item price
-		while(cur_stack < stop_stack):
-			success_chance = base_chance + cur_stack * growth_chance
-			#print(fail_name)
-			fail_cost = conc_cost+repair_cost+db[order[i]][0]-db[fail_name][0]
-			success_cost = db[order[i]][0] - db[success_name][0] + stack_cost + conc_cost
-			costt = round((((success_chance*(success_cost)+((1-success_chance)*(fail_cost))+db[order[i]][0])/(1-success_chance))),2)
-			print("---------------------")
-			print(cur_stack, stack_cost)
-			#print("succ: ", success_cost)
-			#print("fail: ", fail_cost)
-			#print("overall stack cost: ", stack_cost)
-			cur_stack += stack_gain
-			stack_cost += costt
-			#print(cur_stack, stack_cost)
-	#testing
-	for i in order:
-		if i != 'valks':
-			print(i, db[i])
-pri_grunil = (17, 29)
-pri_boss = (pri_grunil[1], 32)
-duo_grunil = (pri_boss[1], 40)
-duo_boss = (duo_grunil[1], 48)
-tri_grunil = (duo_boss[1], 68)
-valks = (tri_grunil[1], 78)
-tri_boss = (valks[1], 93)
-tet_grunil = (tri_boss[1], 111)
-tet_boss = (tet_grunil[1], 150)
-grunil_fs_cost(db, [pri_grunil, pri_boss, duo_grunil, duo_boss, tri_grunil, valks, tri_boss, tet_grunil, tet_boss])
+pri_reblath = (15, 27)
+pri_boss = (pri_reblath[1], 32)
+duo_reblath = (pri_boss[1], 44)
+duo_boss = (duo_reblath[1], 48)
+tri_reblath = (duo_boss[1], 78)
+valks = (tri_reblath[1], tri_reblath[1]+10)
+tri_boss = (tri_reblath[1]+10, 98)
+tet_reblath = (tri_boss[1], 116)
+item_fs_cost(15, reblath_15, db, [pri_reblath, pri_boss, duo_reblath, duo_boss, tri_reblath, valks, tri_boss, tet_reblath])
 exit(1)
 
 def cron_pen(cost_dict, pen_details):
