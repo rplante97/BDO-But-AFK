@@ -1,4 +1,5 @@
 import random
+import numpy as np
 
 #Simulate cost of enhancing pens, assumes infinite supply of base reblath and infinite supply of stack slots
 
@@ -227,68 +228,101 @@ def enhance_tet_boss(stack, boss_arr, stack_arr):
 
 #-------------------------------------------------------------------------#
 
+def gen_item_stacks(strategy, num_clicks, stack_gain):
+    item_stacks = {}
+    cur_stack = 15
+    for item in strategy:
+        item_stacks[item] = (cur_stack, cur_stack + (num_clicks[item]-1)*stack_gain[item])
+        cur_stack = cur_stack + (num_clicks[item])*stack_gain[item]
+    
+    return item_stacks
+
+def find_highest_usable_stack(available_stack_list, strategy_rev, item_stacks, array_index_dict, boss_array, reblath_array):
+    stack = 15
+    cur_item = 0
+    while(cur_item < len(strategy_rev)):
+        item = strategy_rev[cur_item]
+        #print(item)
+
+        item_arr = []
+        if "boss" in item or item == "valks":
+            item_arr = boss_array
+        else:
+            item_arr = reblath_array
+        #print('item_arr', item_arr)
+        array_index = array_index_dict[item]
+        #print("array_index: ", array_index)
+        if item_arr[array_index] > 0:
+            #print("**", item)
+            stack_limits = item_stacks[item]
+            possible_stacks = list(x for x in available_stack_list if stack_limits[0] <= x <= stack_limits[1])
+            possible_stacks.sort(reverse=True)
+            #print(stack_limits)
+            #print("possible: ", possible_stacks)
+            if len(possible_stacks) == 0:
+                cur_item += 1
+                continue
+            stack = possible_stacks[0]
+            break
+        cur_item += 1
+    return stack
+
 def enhance_pen():
-    global succeed_duo
-    global fail_duo
+
+    strategy = ['pri_reblath', 'duo_reblath', 'pri_boss', 'duo_reblath_2', 'duo_boss', 'tri_reblath', 'valks', 'tri_boss', 'tet_reblath', 'tet_boss']
+
+    strategy_rev = [ele for ele in reversed(strategy)] 
+
+    #editable to account for over production of a certain stack or item
+    num_clicks = {}
+    num_clicks['pri_reblath'] = 3
+    num_clicks['duo_reblath'] = 1
+    num_clicks['duo_reblath_2'] = 2
+    num_clicks['tri_reblath'] = 4
+    num_clicks['tet_reblath'] = 3
+    num_clicks['valks'] = 10
+    num_clicks['pri_boss'] = 2
+    num_clicks['duo_boss'] = 2
+    num_clicks['tri_boss'] = 3
+    num_clicks['tet_boss'] = 100
+
+    #do not edit. stack gains are not editable
+    stack_gain = {}
+    stack_gain['pri_reblath'] = 3
+    stack_gain['duo_reblath'] = 4
+    stack_gain['duo_reblath_2'] = 4
+    stack_gain['tri_reblath'] = 5
+    stack_gain['tet_reblath'] = 6
+    stack_gain['valks'] = 1
+    stack_gain['pri_boss'] = 3
+    stack_gain['duo_boss'] = 4
+    stack_gain['tri_boss'] = 5
+    stack_gain['tet_boss'] = 6
+
+    item_stacks = gen_item_stacks(strategy, num_clicks, stack_gain)
+
+    array_index_dict = {}
+    array_index_dict['pri_reblath'] = 4
+    array_index_dict['duo_reblath'] = 0
+    array_index_dict['duo_reblath_2'] = 0
+    array_index_dict['tri_reblath'] = 1
+    array_index_dict['tet_reblath'] = 2
+    array_index_dict['pen_reblath'] = 3
+
+    array_index_dict['duo_boss'] = 0
+    array_index_dict['tri_boss'] = 1
+    array_index_dict['tet_boss'] = 2
+    array_index_dict['pen_boss'] = 3
+    array_index_dict['pri_boss'] = 4
+
+    array_index_dict['valks'] = 5
 
     hitPen = False
-    reblath_array = [0, 0, 0, 0] #Duo, Tri, Tet, Pen
-    boss_array = [0, 0, 0, 0] #Duo, Tri, Tet, Pen
+    reblath_array = [0, 0, 0, 0, 1] #Duo, Tri, Tet, Pen, pri
+    boss_array = [0, 0, 0, 0, 1, 1] #Duo, Tri, Tet, Pen, pri, valks
     cost = 0
     available_stack_list = [15] #Starting stack we initiall click on
-    current_stack_index = 0
-
-    num_pri_tap = 4
-    num_duo_tap = 1
-    num_duo_tap_2 = 2
-    num_tri_tap = 4
-    num_tet_tap = 3
-
-    num_pri_boss_tap = 1
-    num_duo_boss_tap = 2
-    num_tri_boss_tap = 3
-
-    pri_start = 15
-    pri_gain = 3
-
-    duo_start = pri_start + num_pri_tap * pri_gain
-    duo_gain = 4
-
-    pri_boss_start = duo_start + num_duo_tap *duo_gain
-    pri_boss_gain = 3
-
-    duo_start_two = pri_boss_start + num_pri_boss_tap * pri_boss_gain
-    duo_gain_two = 4
-
-    duo_boss_start = duo_start_two + num_duo_tap_2 * duo_gain_two
-    duo_boss_gain = 4
-
-    tri_start = duo_boss_start + num_duo_boss_tap * duo_boss_gain
-    tri_gain = 5
-
-    valks_start = tri_start + num_tri_tap*tri_gain
-
-    tri_boss_start = valks_start + 10
-    tri_boss_gain = 5   
-
-    tet_start = tri_boss_start + num_tri_boss_tap*tri_boss_gain
-    tet_gain = 6
-
-    tet_boss_start = tet_start + num_tet_tap*tet_gain
-
-    print("pri ", pri_start)
-    print("duo ", duo_start)
-    print("pri boss", pri_boss_start)
-    print("duo 2: ", duo_start_two)
-    print("duo boss: ", duo_boss_start)
-    print("tri : ", tri_start)
-    print("valks start: ", valks_start)
-    print("tri boss: ", tri_boss_start)
-    print("tet start: ", tet_start)
-    print("tet_boss_start ", tet_boss_start)
-    #exit(1)
-
-
+    #current_stack_index = 0
 
     while not hitPen:
         #Sort stack list in descending order
@@ -296,118 +330,124 @@ def enhance_pen():
 
         #If we have no stacks then add another 15 (base) stack 
         if not available_stack_list:
-            print("adding 15 stack stack list")
+            #print("adding 15 stack stack list")
             available_stack_list = [15]
             cost += base_stack_cost
         
         #If all availble stacks are too high to tap PRI reblath on add a base stack in case it is needed
-        if available_stack_list[-1] > 21:
+        print("smallest stack: ", min(available_stack_list))
+        if min(available_stack_list) > 21:
             available_stack_list.append(15)
             cost += base_stack_cost
             print("adding 15 stack #2")
 
         #Pick biggest stack that MAY be useable
-        stack = available_stack_list[current_stack_index]
-
-        #print("Max Stack: ", stack)
-        #print(*reblath_array, sep = ", ")
-        #print(*available_stack_list, sep = ", ")
-        #if (succeed_duo + fail_duo) != 0:
-        #    print("success: ", succeed_duo / (succeed_duo +fail_duo))
+        #stack = available_stack_list[current_stack_index]
+        stack = find_highest_usable_stack(available_stack_list, strategy_rev, item_stacks, array_index_dict, boss_array, reblath_array)
+        print("stack: ", stack)
 
         #Tap Pri reblath
-        if stack in(pri_start, pri_start + 1 * pri_gain, pri_start + 2 * pri_gain):
+        if item_stacks['pri_reblath'][0] <= stack <= item_stacks['pri_reblath'][1]:
             #Assume inf supply of PRI reblath, aka we can always click it
             cost += enhance_pri(stack, reblath_array, available_stack_list)
             #Reset current stack index
-            current_stack_index = 0
+            #current_stack_index = 0
             
 
         #Tap Duo reblath
-        elif stack in (duo_start, duo_start_two, duo_start_two + duo_gain):
+        elif item_stacks['duo_reblath'][0] <= stack <= item_stacks['duo_reblath'][1] or item_stacks['duo_reblath_2'][0] <= stack <= item_stacks['duo_reblath_2'][1]:
             #Test if suitable gear to click on proposed stack exists
             if reblath_array[0] > 0:
                 cost += enhance_duo(stack, reblath_array, available_stack_list)
-                current_stack_index = 0
+                #current_stack_index = 0
             else:
                 #Click on this stack not possible, try next highest stack
-                current_stack_index += 1
+                #current_stack_index += 1
                 continue
         
         #Tap Pri boss
-        elif stack in (pri_boss_start, pri_boss_start + pri_boss_gain):
+        elif item_stacks['pri_boss'][0] <= stack <= item_stacks['pri_boss'][1]:
             #Assume inf pri boss supply
             cost += enhance_pri_boss(stack, boss_array, available_stack_list)
-            current_stack_index = 0
+            #current_stack_index = 0
 
         #Tap Duo boss
-        elif stack in (duo_boss_start, duo_boss_start + duo_boss_gain):
+        elif item_stacks['duo_boss'][0] <= stack <= item_stacks['duo_boss'][1]:
             #Test if suitable gear to click on proposed stack exists
             if boss_array[0] > 0:
                 cost += enhance_duo_boss(stack, boss_array, available_stack_list)
-                current_stack_index = 0
+                #current_stack_index = 0
             else:
                 #Click on this stack not possible, try next highest stack
-                current_stack_index += 1
+                #current_stack_index += 1
                 continue
         
         #Tap Tri reblath
-        elif stack in (tri_start, tri_start + tri_gain, tri_start + 2*tri_gain, tri_start + 3*tri_gain):
+        elif item_stacks['tri_reblath'][0] <= stack <= item_stacks['tri_reblath'][1]:
             #Test if suitable gear to click on proposed stack exists
             if reblath_array[1] > 0:
                 cost += enhance_tri(stack, reblath_array, available_stack_list)
-                current_stack_index = 0
+                #current_stack_index = 0
             else:
                 #Click on this stack not possible, try next highest stack
-                current_stack_index += 1
+                #current_stack_index += 1
                 continue
 
         #Valks +10
-        elif stack == valks_start:
+        elif item_stacks['valks'][0] <= stack <= item_stacks['valks'][1]:
             available_stack_list.remove(stack)
             available_stack_list.append(stack + 10)
             cost += 30000000 #10 valks ~30 mil value based on costumes
 
         #Tap Tri boss
-        elif stack in (tri_boss_start, tri_boss_start + 1 * tri_boss_gain, tri_boss_start + 2*tri_boss_gain):
+        elif item_stacks['tri_boss'][0] <= stack <= item_stacks['tri_boss'][1]:
             #Test if suitable gear to click on proposed stack exists
             if boss_array[1] > 0:
                 cost += enhance_tri_boss(stack, boss_array, available_stack_list)
-                current_stack_index = 0
+                #current_stack_index = 0
             else:
                 #Click on this stack not possible, try next highest stack
-                current_stack_index += 1
+                #current_stack_index += 1
                 continue
 
         #Tap Tet reblath
-        elif stack in (tet_start, tet_start + 1*tet_gain, tet_start + 2*tet_gain):
+        elif item_stacks['tet_reblath'][0] <= stack <= item_stacks['tet_reblath'][1]:
             #Test if suitable gear to click on proposed stack exists
             if reblath_array[2] > 0:
                 cost += enhance_tet(stack, reblath_array, available_stack_list)
-                current_stack_index = 0
+                #current_stack_index = 0
             else:
                 #Click on this stack not possible, try next highest stack
-                current_stack_index += 1
+                #current_stack_index += 1
                 continue
 
         #Tap Tet boss
-        elif stack >= tet_boss_start:
+        elif item_stacks['tet_boss'][0] <= stack <= item_stacks['tet_boss'][1]:
             #Test if suitable gear to click on proposed stack exists
             if boss_array[2] > 0:
                 cost += enhance_tet_boss(stack, boss_array, available_stack_list)
-                current_stack_index = 0
+                #current_stack_index = 0
                 if boss_array[3] > 0:
                     hitPen = True
             else:
                 #Click on this stack not possible, try next highest stack
-                current_stack_index += 1
+                #current_stack_index += 1
                 #Check to see if we hit a pen
                 continue
 
         #Error condition
         else:
             print(stack)
-            print("Error: Unhandled stack value")
+            print("strategy: ", item_stacks)
+            print("Stack: ", stack)
+            print("Cost (Millions): ", cost/1000000)
+            print("Stacks List: ")
+            print(*available_stack_list, sep=", ")
+            print("Reblath Gear: ")
+            print("duo_reblath: ", reblath_array[0], "| tri_reblath: ", reblath_array[1], "| tet_reblath: ", reblath_array[2], "| pen_reblath: ", reblath_array[3], )
+            print("Boss Gear: ")
+            print("duo_boss: ", boss_array[0], "| tri_boss: ", boss_array[1], "| tet_boss: ", boss_array[2], "| pen_boss: ", boss_array[3], )
+            exit(1)
 
 
         print("Cost: ", cost/1000000)
@@ -418,9 +458,9 @@ def enhance_pen():
     print("Stacks List: ")
     print(*available_stack_list, sep=", ")
     print("Reblath Gear: ")
-    print(*reblath_array, sep=", ")
+    print("duo_reblath: ", reblath_array[0], "| tri_reblath: ", reblath_array[1], "| tet_reblath: ", reblath_array[2], "| pen_reblath: ", reblath_array[3], )
     print("Boss Gear: ")
-    print(*boss_array, sep=", ")
+    print("duo_boss: ", boss_array[0], "| tri_boss: ", boss_array[1], "| tet_boss: ", boss_array[2], "| pen_boss: ", boss_array[3], )
 
 
 
