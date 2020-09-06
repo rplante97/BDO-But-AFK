@@ -265,7 +265,7 @@ def find_highest_usable_stack(available_stack_list, strategy_rev, item_stacks, a
         cur_item += 1
     return stack
 
-def enhance_pen():
+def enhance_pen(reblath_array, boss_array, cost, available_stack_list):
 
     strategy = ['pri_reblath', 'duo_reblath', 'pri_boss', 'duo_reblath_2', 'duo_boss', 'tri_reblath', 'valks', 'tri_boss', 'tet_reblath', 'tet_boss']
 
@@ -281,7 +281,7 @@ def enhance_pen():
     num_clicks['valks'] = 10
     num_clicks['pri_boss'] = 2
     num_clicks['duo_boss'] = 2
-    num_clicks['tri_boss'] = 3
+    num_clicks['tri_boss'] = 4
     num_clicks['tet_boss'] = 100
 
     #do not edit. stack gains are not editable
@@ -318,11 +318,14 @@ def enhance_pen():
     hitPen = False
 
     #edited these two arrays so that we ALWAYS have pri reblath, and we ALWAYS have valks and pri_boss. Do not edit those values from '1'
-    reblath_array = [0, 0, 0, 0, 1] #Duo, Tri, Tet, Pen, pri
-    boss_array = [0, 0, 0, 0, 1, 1] #Duo, Tri, Tet, Pen, pri, valks
-    cost = 0
-    available_stack_list = [15] #Starting stack we initiall click on
+    # reblath_array = [0, 0, 0, 0, 1] #Duo, Tri, Tet, Pen, pri
+    # boss_array = [0, 0, 0, 0, 1, 1] #Duo, Tri, Tet, Pen, pri, valks
+    # cost = 0
+    # available_stack_list = [15] #Starting stack we initiall click on
     #current_stack_index = 0
+
+    #Temp, needed to make looping work, otherwise next time we attempt tet boss function will think it succeeded in pen no matter what
+    boss_array[3] = 0
 
     while not hitPen:
         #Sort stack list in descending order
@@ -339,12 +342,12 @@ def enhance_pen():
         if min(available_stack_list) > 21:
             available_stack_list.append(15)
             cost += base_stack_cost
-            print("adding 15 stack #2")
+            #print("adding 15 stack #2")
 
         #Pick biggest stack that MAY be useable
         #stack = available_stack_list[current_stack_index]
         stack = find_highest_usable_stack(available_stack_list, strategy_rev, item_stacks, array_index_dict, boss_array, reblath_array)
-        print("stack: ", stack)
+        #print("stack: ", stack)
 
         #Tap Pri reblath
         if item_stacks['pri_reblath'][0] <= stack <= item_stacks['pri_reblath'][1]:
@@ -410,7 +413,7 @@ def enhance_pen():
                 #current_stack_index += 1
                 continue
 
-        #Tap Tet reblath
+        # #Tap Tet reblath
         elif item_stacks['tet_reblath'][0] <= stack <= item_stacks['tet_reblath'][1]:
             #Test if suitable gear to click on proposed stack exists
             if reblath_array[2] > 0:
@@ -450,7 +453,7 @@ def enhance_pen():
             exit(1)
 
 
-        print("Cost: ", cost/1000000)
+        #print("Cost: ", cost/1000000)
 
     #This code is reachable only after a PEN boss item is enhanced
     print("Stack: ", stack)
@@ -463,10 +466,32 @@ def enhance_pen():
     print("Boss Gear: ")
     print("duo_boss: ", boss_array[0], "| tri_boss: ", boss_array[1], "| tet_boss: ", boss_array[2], "| pen_boss: ", boss_array[3], )
 
+    return reblath_array, boss_array, cost, available_stack_list
 
 
-def main():
-    enhance_pen()
+
+def main(iterations):
+    #enhance_pen()
+    reblath_array = [0, 0, 0, 0, 1] #Duo, Tri, Tet, Pen, pri
+    boss_array = [0, 0, 0, 0, 1, 1] #Duo, Tri, Tet, Pen, pri, valks
+    cost = 0
+    available_stack_list = [15] #Starting stack we initiall click on
+
+    cost_list = []
+    for i in range(iterations):
+        print("--------------------------------------------------------------------------------------------------------------------------")
+        print()
+        reblath_array, boss_array, cost, available_stack_list =  enhance_pen(reblath_array, boss_array, 0, available_stack_list)
+        cost_list.append(cost/1000000)
+        print("--------------------------------------------------------------------------------------------------------------------------")
+
+    # cost_mil = cost/1000000
+    # avg_cost = cost_mil/iterations
+    print(cost_list)
+    print(sum(cost_list))
+    print(len(cost_list))
+    print("Avg Cost: ", sum(cost_list)/iterations)
+
 
 #RUN MAIN
-main()
+main(10)
