@@ -265,6 +265,15 @@ def find_highest_usable_stack(available_stack_list, strategy_rev, item_stacks, a
         cur_item += 1
     return stack
 
+def update_num_clicks(num_clicks, click_modification):
+    for key in num_clicks:
+        if key == "valks" or key == "tet_boss":
+            continue
+        else:
+            num_clicks[key] += click_modification[key]
+
+    return num_clicks
+
 def enhance_pen(reblath_array, boss_array, cost, available_stack_list):
 
     strategy = ['pri_reblath', 'duo_reblath', 'pri_boss', 'duo_reblath_2', 'duo_boss', 'tri_reblath', 'valks', 'tri_boss', 'tet_reblath', 'tet_boss']
@@ -297,6 +306,27 @@ def enhance_pen(reblath_array, boss_array, cost, available_stack_list):
     stack_gain['tri_boss'] = 5
     stack_gain['tet_boss'] = 6
 
+    #logic based on threshold X:
+    #if a certain number of items exceeds X:
+    #   then we decrease the number of clicks of creating that item by 1
+    #if a certain number of stacks exceeds X:
+    #   then we increase the number of clicks on that stack by 1
+    click_modification = {}
+    click_modification['pri_reblath'] = 0
+    click_modification['duo_reblath'] = 0
+    click_modification['tri_reblath'] = 0
+    click_modification['tet_reblath'] = 0
+    click_modification['pri_boss'] = 0
+    click_modification['duo_boss'] = 0
+    click_modification['tri_boss'] = 0
+
+    #valks and tet_boss should never change
+    click_modification['tet_boss'] = 0
+    click_modification['valks'] = 0
+
+    num_clicks = update_num_clicks(num_clicks, click_modification)
+    print(num_clicks)
+    exit(1)
     item_stacks = gen_item_stacks(strategy, num_clicks, stack_gain)
 
     array_index_dict = {}
@@ -314,6 +344,8 @@ def enhance_pen(reblath_array, boss_array, cost, available_stack_list):
     array_index_dict['pri_boss'] = 4
 
     array_index_dict['valks'] = 5
+
+
 
     hitPen = False
 
