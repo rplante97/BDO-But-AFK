@@ -285,12 +285,12 @@ def enhance_pen(reblath_array, boss_array, cost, available_stack_list):
     num_clicks['pri_reblath'] = 3
     num_clicks['duo_reblath'] = 1
     num_clicks['duo_reblath_2'] = 2
-    num_clicks['tri_reblath'] = 4
+    num_clicks['tri_reblath'] = 3
     num_clicks['tet_reblath'] = 3
     num_clicks['valks'] = 10
-    num_clicks['pri_boss'] = 2
+    num_clicks['pri_boss'] = 1
     num_clicks['duo_boss'] = 2
-    num_clicks['tri_boss'] = 4
+    num_clicks['tri_boss'] = 5
     num_clicks['tet_boss'] = 100
 
     #do not edit. stack gains are not editable
@@ -360,6 +360,68 @@ def enhance_pen(reblath_array, boss_array, cost, available_stack_list):
     boss_array[3] = 0
 
     while not hitPen:
+
+        #TEMP SMARTER STACKING CODE
+
+        #This tests for excess of "24" stacks
+
+        base_num_clicks = {}
+        base_num_clicks['pri_reblath'] = 3
+        base_num_clicks['duo_reblath'] = 1
+        base_num_clicks['duo_reblath_2'] = 2
+        base_num_clicks['tri_reblath'] = 3
+        base_num_clicks['tet_reblath'] = 3
+        base_num_clicks['valks'] = 10
+        base_num_clicks['pri_boss'] = 2
+        base_num_clicks['duo_boss'] = 2
+        base_num_clicks['tri_boss'] = 5
+        base_num_clicks['tet_boss'] = 100
+
+        num_clicks = base_num_clicks
+
+        base_item_stacks = gen_item_stacks(strategy, base_num_clicks, stack_gain)
+
+        # item_stacks = gen_item_stacks(strategy, num_clicks, stack_gain)
+
+        if(available_stack_list.count(base_item_stacks['duo_reblath'][1]) > 10):
+            #If excess of stacks is detected allow for another click to happen
+            num_clicks['pri_reblath'] = base_num_clicks['pri_reblath'] + 1
+            item_stacks = gen_item_stacks(strategy, num_clicks, stack_gain)
+        else:
+            num_clicks['pri_reblath'] = base_num_clicks['pri_reblath']
+            item_stacks = gen_item_stacks(strategy, num_clicks, stack_gain)
+
+        
+        if(available_stack_list.count(item_stacks['duo_reblath'][1]) > 10):
+            #If excess of stacks is detected allow for another click to happen
+            num_clicks['pri_reblath'] = base_num_clicks['pri_reblath'] + 2
+            item_stacks = gen_item_stacks(strategy, num_clicks, stack_gain)
+        else:
+            num_clicks['pri_reblath'] = base_num_clicks['pri_reblath']
+            item_stacks = gen_item_stacks(strategy, num_clicks, stack_gain)
+
+
+        if(available_stack_list.count(base_item_stacks['duo_boss'][1]) > 10):
+            #If excess of stacks is detected allow for another click to happen
+            num_clicks['pri_boss'] = base_num_clicks['pri_boss'] + 1
+            item_stacks = gen_item_stacks(strategy, num_clicks, stack_gain)
+        else:
+            num_clicks['pri_boss'] = base_num_clicks['pri_boss']
+            item_stacks = gen_item_stacks(strategy, num_clicks, stack_gain)
+
+        
+        if(available_stack_list.count(item_stacks['duo_boss'][1]) > 10):
+            #If excess of stacks is detected allow for another click to happen
+            num_clicks['pri_boss'] = base_num_clicks['pri_boss'] + 2
+            item_stacks = gen_item_stacks(strategy, num_clicks, stack_gain)
+        else:
+            num_clicks['pri_boss'] = base_num_clicks['pri_boss']
+            item_stacks = gen_item_stacks(strategy, num_clicks, stack_gain)
+        # if(8 < available_stack_list.count(item_stacks['duo_reblath'][1]) < 10):
+        #     #If excess of stacks is detected allow for another click to happen
+        #     num_clicks['pri_reblath'] -= 1
+        #     item_stacks = gen_item_stacks(strategy, num_clicks, stack_gain)
+
         #Sort stack list in descending order
         available_stack_list.sort(reverse=True)
 
