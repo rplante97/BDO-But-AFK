@@ -242,23 +242,21 @@ def find_highest_usable_stack(available_stack_list, strategy_rev, item_stacks, a
     cur_item = 0
     while(cur_item < len(strategy_rev)):
         item = strategy_rev[cur_item]
-        #print(item)
 
         item_arr = []
         if "boss" in item or item == "valks":
             item_arr = boss_array
         else:
             item_arr = reblath_array
-        #print('item_arr', item_arr)
         array_index = array_index_dict[item]
-        #print("array_index: ", array_index)
+        
+        #checks if I have an item of that enhance
         if item_arr[array_index] > 0:
-            #print("**", item)
             stack_limits = item_stacks[item]
             possible_stacks = list(x for x in available_stack_list if stack_limits[0] <= x <= stack_limits[1])
             possible_stacks.sort(reverse=True)
-            #print(stack_limits)
-            #print("possible: ", possible_stacks)
+
+            #no possible stacks
             if len(possible_stacks) == 0:
                 cur_item += 1
                 continue
@@ -318,6 +316,8 @@ def enhance_pen():
     array_index_dict['valks'] = 5
 
     hitPen = False
+
+    #edited these two arrays so that we ALWAYS have pri reblath, and we ALWAYS have valks and pri_boss. Do not edit those values from '1'
     reblath_array = [0, 0, 0, 0, 1] #Duo, Tri, Tet, Pen, pri
     boss_array = [0, 0, 0, 0, 1, 1] #Duo, Tri, Tet, Pen, pri, valks
     cost = 0
@@ -335,7 +335,7 @@ def enhance_pen():
             cost += base_stack_cost
         
         #If all availble stacks are too high to tap PRI reblath on add a base stack in case it is needed
-        print("smallest stack: ", min(available_stack_list))
+        #print("smallest stack: ", min(available_stack_list))
         if min(available_stack_list) > 21:
             available_stack_list.append(15)
             cost += base_stack_cost
@@ -454,6 +454,7 @@ def enhance_pen():
 
     #This code is reachable only after a PEN boss item is enhanced
     print("Stack: ", stack)
+    print("strategy: ", item_stacks)
     print("Cost (Millions): ", cost/1000000)
     print("Stacks List: ")
     print(*available_stack_list, sep=", ")
