@@ -16,21 +16,16 @@ downgrade_chance = 0.3
 crons = [62, 187, 562, 1562]
 crons1 = [24, 74, 224, 625]
 #0.275
-success_chance = [0.745, 0.5, 0.405, 0.3] #This equates to stacks 27, 40, 44, 100
+success_chance = [0.745, 0.5, 0.405, 0.3] #This equates to stacks 27, 40, 44, 110
 
 # print(tet_cost)
 
 #Simulation
-<<<<<<< HEAD
 total_cost = 0
-=======
-cost = 0 #20 bil
->>>>>>> parent of 8515ae9... Biohack failstack method calcs
 enhance_level = 0
 stack_costs = [10.5, 116, 116, 1800]
 stack_usage = [0, 0, 0, 0]
 fail_counter = [0, 0, 0, 0]
-<<<<<<< HEAD
 downgrade_counter = [0,0,0,0]
 acc_price = float(sys.argv[1])
 reward = float(sys.argv[2])
@@ -53,15 +48,6 @@ for i in range(trials):
         if cron[enhance_level] == True:
             cost += crons[enhance_level]
         #print(str(cost) + " | " + str(crons[enhance_level]))
-=======
-trials = 100000
-
-for i in range(trials):
-    enhance_level = 0 #Reset enhance to 0 after each run
-    while enhance_level < 4:
-        #Cost per tap is always just the price of disto + amount of crons used
-        cost = cost + disto_price + crons[enhance_level]
->>>>>>> parent of 8515ae9... Biohack failstack method calcs
         if random.random() < success_chance[enhance_level]:
             #Enhance success
             stack_usage[enhance_level] += 1 #reflect usage of stack on success
@@ -69,7 +55,6 @@ for i in range(trials):
             
         else:
             #Enhance failure
-<<<<<<< HEAD
             fail_counter[enhance_level] += 1
             if cron[enhance_level] == True:
                 if random.random() < downgrade_chance:
@@ -83,13 +68,6 @@ for i in range(trials):
         #print(enhance_level)
         
     total_cost = total_cost + cost
-=======
-            if random.random() < downgrade_chance:
-                #Enhancement caused downgrade
-                fail_counter[enhance_level] += 1
-                if enhance_level > 0: #Downgrade unless we failed a tap for PRI
-                    enhance_level -= 1
->>>>>>> parent of 8515ae9... Biohack failstack method calcs
 
 for i in range(len(clicks)):
     clicks[i] = clicks[i]/trials
@@ -100,7 +78,6 @@ for i in range(len(stack_costs)):
     overall_stack_cost += stack_usage[i]*stack_costs[i]
 print("average stack costs: ", overall_stack_cost/trials)
 print("Total Trials: " + str(trials))
-<<<<<<< HEAD
 print("average Cost in accs: " + str(total_cost/trials))
 levels = ['PRI', 'DUO', 'TRI', 'TET']
 stack_used = "[Stacks Used (Avg)]: "
@@ -118,11 +95,4 @@ print(downgrade_rate)
 print(failure_rate)
 print("[success rate]          " + "PRI: " + str(stack_usage[0]/trials/clicks[0]) + " | DUO: " + str(stack_usage[1]/trials/clicks[1]) + " | TRI: " + str(stack_usage[2]/trials/clicks[2]) + " | TET: " + str(stack_usage[3]/trials/clicks[3]))
 #print("Num Attempts Costing > 50 Bil: " + str(rip))
-=======
-print("Average Cost: " + str(cost/trials))
-print("[Stacks Used (Avg)] " + "PRI: " + str(stack_usage[0]/trials) + " | DUO: " + str(stack_usage[1]/trials) + " | TRI: " + str(stack_usage[2]/trials) + " | TET: " + str(stack_usage[3]/trials))
-print("[Downgrade Rate]    " + "PRI: " + str(fail_counter[0]/trials) + " | DUO: " + str(fail_counter[1]/trials) + " | TRI: " + str(fail_counter[2]/trials) + " | TET: " + str(fail_counter[3]/trials))
 
->>>>>>> parent of 8515ae9... Biohack failstack method calcs
-
-    
