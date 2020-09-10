@@ -13,6 +13,7 @@ conc_cost = 2150000
 reblath_repair_cost = 12900
 boss_repair_cost = 10 * 1300000
 base_stack_cost = 5150000
+cron_cost = 429000000
 
 #temp global
 succeed_duo = 0
@@ -228,6 +229,32 @@ def enhance_tet_boss(stack, boss_arr, stack_arr):
 
 #-------------------------------------------------------------------------#
 
+def cron_tet_boss(stack, boss_arr, stack_arr):
+    #Constants
+    base_chance = 0.003
+    increase_per_stack = 0.0003
+    cost = 0
+    hitPen = False
+    
+    #Remove stack from list, we are cronning so we know we will use it
+    stack_arr.remove(stack)
+
+    while hitPen is False:
+
+        if random.random() < (base_chance + (stack * increase_per_stack)):
+            #Success: enhanced w/ crons
+            boss_arr[3] += 1 #add pen
+            boss_arr[2] -= 1 #subtract tet
+            cost += conc_cost + cron_cost
+            hitPen = True
+        else: 
+            #Failed: add to stack
+            cost += conc_cost + boss_repair_cost + cron_cost
+
+    return cost
+
+#-------------------------------------------------------------------------#
+
 def gen_item_stacks(strategy, num_clicks, stack_gain):
     item_stacks = {}
     cur_stack = 15
@@ -324,8 +351,8 @@ def enhance_pen(reblath_array, boss_array, cost, available_stack_list):
     # available_stack_list = [15] #Starting stack we initiall click on
     #current_stack_index = 0
 
-    #Temp, needed to make looping work, otherwise next time we attempt tet boss function will think it succeeded in pen no matter what
-    boss_array[3] = 0
+    # #Temp, needed to make looping work, otherwise next time we attempt tet boss function will think it succeeded in pen no matter what
+    # boss_array[3] = 0
 
     while not hitPen:
 
@@ -337,8 +364,8 @@ def enhance_pen(reblath_array, boss_array, cost, available_stack_list):
         base_num_clicks['pri_reblath'] = 3
         base_num_clicks['duo_reblath'] = 1
         base_num_clicks['duo_reblath_2'] = 2
-        base_num_clicks['tri_reblath'] = 3
-        base_num_clicks['tet_reblath'] = 3
+        base_num_clicks['tri_reblath'] = 4
+        base_num_clicks['tet_reblath'] = 4
         base_num_clicks['valks'] = 10
         base_num_clicks['pri_boss'] = 2
         base_num_clicks['duo_boss'] = 2
@@ -385,10 +412,10 @@ def enhance_pen(reblath_array, boss_array, cost, available_stack_list):
         else:
             num_clicks['pri_boss'] = base_num_clicks['pri_boss']
             item_stacks = gen_item_stacks(strategy, num_clicks, stack_gain)
-        # if(8 < available_stack_list.count(item_stacks['duo_reblath'][1]) < 10):
-        #     #If excess of stacks is detected allow for another click to happen
-        #     num_clicks['pri_reblath'] -= 1
-        #     item_stacks = gen_item_stacks(strategy, num_clicks, stack_gain)
+        # # if(8 < available_stack_list.count(item_stacks['duo_reblath'][1]) < 10):
+        # #     #If excess of stacks is detected allow for another click to happen
+        # #     num_clicks['pri_reblath'] -= 1
+        # #     item_stacks = gen_item_stacks(strategy, num_clicks, stack_gain)
 
         #Sort stack list in descending order
         available_stack_list.sort(reverse=True)
@@ -488,17 +515,34 @@ def enhance_pen(reblath_array, boss_array, cost, available_stack_list):
 
         #Tap Tet boss
         elif item_stacks['tet_boss'][0] <= stack <= item_stacks['tet_boss'][1]:
-            #Test if suitable gear to click on proposed stack exists
-            if boss_array[2] > 0:
-                cost += enhance_tet_boss(stack, boss_array, available_stack_list)
-                #current_stack_index = 0
-                if boss_array[3] > 0:
-                    hitPen = True
+            
+            num_pens_before_tap = boss_array[3]
+
+            #Test if second largest stack is large enough to cron
+            #print("Second largest stack: ", available_stack_list[1])
+            if(available_stack_list[1] >= 100):
+                #print("Cronning tet boss")
+                cost += cron_tet_boss(available_stack_list[1], boss_array, available_stack_list)
             else:
-                #Click on this stack not possible, try next highest stack
-                #current_stack_index += 1
-                #Check to see if we hit a pen
-                continue
+                cost += enhance_tet_boss(stack, boss_array, available_stack_list)
+                if boss_array[3] > num_pens_before_tap:
+                    hitPen = True
+
+
+
+
+
+
+            # if boss_array[2] > 0:
+            #     cost += enhance_tet_boss(stack, boss_array, available_stack_list)
+            #     #current_stack_index = 0
+            #     if boss_array[3] > 0:
+            #         hitPen = True
+            # else:
+            #     #Click on this stack not possible, try next highest stack
+            #     #current_stack_index += 1
+            #     #Check to see if we hit a pen
+            #     continue
 
         #Error condition
         else:
@@ -552,8 +596,9 @@ def main(iterations):
     print(cost_list)
     print(sum(cost_list))
     print(len(cost_list))
-    print("Avg Cost: ", sum(cost_list)/iterations)
+    #print("Avg Cost: ", sum(cost_list)/iterations)
+    print("Avg Cost Per Pen: ", sum(cost_list)/boss_array[3])
 
 
 #RUN MAIN
-main(10)
+main(5)
