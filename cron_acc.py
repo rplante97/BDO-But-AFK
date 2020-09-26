@@ -30,8 +30,8 @@ trials = 10000
 total_acc_used = 0
 for i in range(trials):
     enhance_level = 0 #Reset enhance to 0 after each run
-    cost = 0 
-    acc_used = 0
+    cost = acc_price
+    acc_used = 1
     while enhance_level < sell_level:
         #Cost per tap is always just the price of disto + amount of crons used
         cost = cost + acc_price
@@ -55,6 +55,8 @@ for i in range(trials):
                         enhance_level -= 1
             else:
                 enhance_level = 0
+                acc_used += 1
+                cost += acc_price
 
         
     total_cost = total_cost + cost
@@ -70,10 +72,12 @@ overall_stack_cost = 0
 for i in range(len(stack_costs)):
     overall_stack_cost += stack_usage[i]/trials*stack_costs[i]
 print("Total Trials: " + str(trials))
+print("Rev: ", reward*0.85)
+print("Avg stack cost: ", overall_stack_cost)
 print("Average Cost: " + str(total_cost/trials + overall_stack_cost))
 print("Average acc used: " + str(total_acc_used/trials))
 print("Average money in Acc: ", str(total_acc_used/trials*acc_price))
-print("Average money in Crons: ", str(total_cost/trials - total_acc_used/trials*acc_price))
+print("Average money in Crons: ", str(total_cost/trials - total_acc_used/trials*acc_price - overall_stack_cost))
 levels = ['PRI', 'DUO', 'TRI', 'TET']
 stack_used = "[Stacks Used (Avg)]: "
 downgrade_rate = "[Downgrade Rate]    "
