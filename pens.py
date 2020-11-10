@@ -217,6 +217,7 @@ def enhance_tet_boss(stack, boss_arr, stack_arr):
         boss_arr[3] += 1 #add pen
         boss_arr[2] -= 1 #subtract tet
         cost = conc_cost
+        hit = True
     else: 
         #Failed: add to stack
         stack_arr.append(stack + fs_gain_per_attempt)
@@ -259,6 +260,7 @@ def gen_item_stacks(strategy, num_clicks, stack_gain):
     item_stacks = {}
     cur_stack = 15
     for item in strategy:
+        #print(item)
         item_stacks[item] = (cur_stack, cur_stack + (num_clicks[item]-1)*stack_gain[item])
         cur_stack = cur_stack + (num_clicks[item])*stack_gain[item]
     
@@ -297,11 +299,62 @@ def update_num_clicks(num_clicks, click_modification):
         if key == "valks" or key == "tet_boss":
             continue
         else:
-            num_clicks[key] += click_modification[key]
+            num_clicks[key] = max(1,int(num_clicks[key] + click_modification[key]))
 
     return num_clicks
 
-def enhance_pen(reblath_array, boss_array, cost, available_stack_list):
+def update_stack_counters(reblath_stack_array, boss_stack_array, available_stack_list, item_stacks, array_index_dict):
+    for i in available_stack_list:
+        for key in item_stacks:
+            lower = item_stacks[key][0]
+            upper = item_stacks[key][1]
+            if i >= lower and i <= upper:
+                index = array_index_dict[key]
+                if "boss" in key or key == "valks":
+                    boss_stack_array[index] += 1
+                else:
+                    reblath_stack_array[index] += 1
+    return reblath_stack_array, boss_stack_array
+
+
+def update_click_modifications(reblath_stack_array, boss_stack_array, boss_array, reblath_array, array_index_dict, click_modification, refrac, threshold=8):
+    edit_dict = {}
+    edit_dict['duo_reblath'] = 'pri_reblath'
+    edit_dict['pri_boss'] = 'duo_reblath'
+    edit_dict['duo_reblath_2'] = 'pri_boss'
+    edit_dict['duo_boss'] = 'duo_reblath_2'
+    edit_dict['tri_reblath'] = 'duo_boss'
+    edit_dict['tri_boss'] = 'tri_reblath'
+    edit_dict['tet_reblath'] = 'tri_boss'
+    edit_dict['tet_boss'] = 'tet_reblath'
+    
+    if refrac == 10:
+        refrac=0
+    if refrac == 0:
+        for key in click_modification:
+            if key == "pri_reblath" or key == "valks":
+                continue
+            index = array_index_dict[key]
+            edit_key = edit_dict[key]
+            item_arr = reblath_array
+            stack_arr = reblath_stack_array
+            if "boss" in key or "valks" in key:
+                item_arr = boss_array
+                stack_arr = boss_stack_array
+
+            if (item_arr[index] - stack_arr[index]) > threshold:
+                click_modification[edit_key] += 1
+            elif (stack_arr[index] - item_arr[index]) > threshold:
+                click_modification[edit_key] -= 1
+    else:
+        for key in click_modification:
+            click_modification[key] = 0
+    return click_modification, refrac+1
+
+
+
+
+def enhance_pen(reblath_array, boss_array, cost, available_stack_list, reblath_stack_array, boss_stack_array):
 
     strategy = ['pri_reblath', 'duo_reblath', 'pri_boss', 'duo_reblath_2', 'duo_boss', 'tri_reblath', 'valks', 'tri_boss', 'tet_reblath', 'tet_boss']
 
@@ -312,7 +365,7 @@ def enhance_pen(reblath_array, boss_array, cost, available_stack_list):
     num_clicks['pri_reblath'] = 3
     num_clicks['duo_reblath'] = 1
     num_clicks['duo_reblath_2'] = 2
-    num_clicks['tri_reblath'] = 3
+    num_clicks['tri_reblath'] = 4
     num_clicks['tet_reblath'] = 3
     num_clicks['valks'] = 10
     num_clicks['pri_boss'] = 1
@@ -341,6 +394,7 @@ def enhance_pen(reblath_array, boss_array, cost, available_stack_list):
     click_modification = {}
     click_modification['pri_reblath'] = 0
     click_modification['duo_reblath'] = 0
+    click_modification['duo_reblath_2'] = 0
     click_modification['tri_reblath'] = 0
     click_modification['tet_reblath'] = 0
     click_modification['pri_boss'] = 0
@@ -351,10 +405,12 @@ def enhance_pen(reblath_array, boss_array, cost, available_stack_list):
     click_modification['tet_boss'] = 0
     click_modification['valks'] = 0
 
+    refrac = 0 #refractory perdiod of when u can change a value in the click modification, default set to every 10 iterations
+
     num_clicks = update_num_clicks(num_clicks, click_modification)
-    print(num_clicks)
-    exit(1)
     item_stacks = gen_item_stacks(strategy, num_clicks, stack_gain)
+
+    print("item stacks: ", item_stacks)
 
     array_index_dict = {}
     array_index_dict['pri_reblath'] = 4
@@ -375,7 +431,6 @@ def enhance_pen(reblath_array, boss_array, cost, available_stack_list):
 
 
     hitPen = False
-
     #edited these two arrays so that we ALWAYS have pri reblath, and we ALWAYS have valks and pri_boss. Do not edit those values from '1'
     # reblath_array = [0, 0, 0, 0, 1] #Duo, Tri, Tet, Pen, pri
     # boss_array = [0, 0, 0, 0, 1, 1] #Duo, Tri, Tet, Pen, pri, valks
@@ -390,67 +445,33 @@ def enhance_pen(reblath_array, boss_array, cost, available_stack_list):
 
         #TEMP SMARTER STACKING CODE
 
-        #This tests for excess of "24" stacks
+        #available_stack_list.extend([89,24,28,45,80,150,29, 24, 40, 57,70])
+        reblath_stack_array, boss_stack_array = update_stack_counters(reblath_stack_array, boss_stack_array, available_stack_list, item_stacks, array_index_dict)
 
-        base_num_clicks = {}
-        base_num_clicks['pri_reblath'] = 3
-        base_num_clicks['duo_reblath'] = 1
-        base_num_clicks['duo_reblath_2'] = 2
-        base_num_clicks['tri_reblath'] = 4
-        base_num_clicks['tet_reblath'] = 4
-        base_num_clicks['valks'] = 10
-        base_num_clicks['pri_boss'] = 2
-        base_num_clicks['duo_boss'] = 2
-        base_num_clicks['tri_boss'] = 5
-        base_num_clicks['tet_boss'] = 100
+        click_modification, refrac = update_click_modifications(reblath_stack_array, boss_stack_array, boss_array, reblath_array, array_index_dict, click_modification, refrac, threshold = 8)
 
-        num_clicks = base_num_clicks
+        num_clicks = update_num_clicks(num_clicks, click_modification)
+        item_stacks = gen_item_stacks(strategy, num_clicks, stack_gain)
 
-        base_item_stacks = gen_item_stacks(strategy, base_num_clicks, stack_gain)
-
-        # item_stacks = gen_item_stacks(strategy, num_clicks, stack_gain)
-
-        if(available_stack_list.count(base_item_stacks['duo_reblath'][1]) > 10):
-            #If excess of stacks is detected allow for another click to happen
-            num_clicks['pri_reblath'] = base_num_clicks['pri_reblath'] + 1
-            item_stacks = gen_item_stacks(strategy, num_clicks, stack_gain)
-        else:
-            num_clicks['pri_reblath'] = base_num_clicks['pri_reblath']
-            item_stacks = gen_item_stacks(strategy, num_clicks, stack_gain)
-
-        
-        if(available_stack_list.count(item_stacks['duo_reblath'][1]) > 10):
-            #If excess of stacks is detected allow for another click to happen
-            num_clicks['pri_reblath'] = base_num_clicks['pri_reblath'] + 2
-            item_stacks = gen_item_stacks(strategy, num_clicks, stack_gain)
-        else:
-            num_clicks['pri_reblath'] = base_num_clicks['pri_reblath']
-            item_stacks = gen_item_stacks(strategy, num_clicks, stack_gain)
-
-
-        if(available_stack_list.count(base_item_stacks['duo_boss'][1]) > 10):
-            #If excess of stacks is detected allow for another click to happen
-            num_clicks['pri_boss'] = base_num_clicks['pri_boss'] + 1
-            item_stacks = gen_item_stacks(strategy, num_clicks, stack_gain)
-        else:
-            num_clicks['pri_boss'] = base_num_clicks['pri_boss']
-            item_stacks = gen_item_stacks(strategy, num_clicks, stack_gain)
-
-        
-        if(available_stack_list.count(item_stacks['duo_boss'][1]) > 10):
-            #If excess of stacks is detected allow for another click to happen
-            num_clicks['pri_boss'] = base_num_clicks['pri_boss'] + 2
-            item_stacks = gen_item_stacks(strategy, num_clicks, stack_gain)
-        else:
-            num_clicks['pri_boss'] = base_num_clicks['pri_boss']
-            item_stacks = gen_item_stacks(strategy, num_clicks, stack_gain)
-        # # if(8 < available_stack_list.count(item_stacks['duo_reblath'][1]) < 10):
-        # #     #If excess of stacks is detected allow for another click to happen
-        # #     num_clicks['pri_reblath'] -= 1
-        # #     item_stacks = gen_item_stacks(strategy, num_clicks, stack_gain)
-
-        #Sort stack list in descending order
         available_stack_list.sort(reverse=True)
+        #print("Stack: ", stack)
+        print("---------------------------------")
+        print("Cost (Millions): ", cost/1000000)
+        print("strategy: ", item_stacks)
+        print("Stacks List: ")
+        print(*available_stack_list, sep=", ")
+        print("Reblath Gear: ")
+        print("duo_reblath: ", reblath_array[0], "| tri_reblath: ", reblath_array[1], "| tet_reblath: ", reblath_array[2], "| pen_reblath: ", reblath_array[3], )
+        print("Boss Gear: ")
+        print("duo_boss: ", boss_array[0], "| tri_boss: ", boss_array[1], "| tet_boss: ", boss_array[2], "| pen_boss: ", boss_array[3], )
+        print("")
+
+        if boss_array[3] > 0:
+            print("")
+            print("aisjd: ", boss_array)
+            print("")
+            hitPen = True
+            break
 
         #If we have no stacks then add another 15 (base) stack 
         if not available_stack_list:
@@ -460,7 +481,7 @@ def enhance_pen(reblath_array, boss_array, cost, available_stack_list):
         
         #If all availble stacks are too high to tap PRI reblath on add a base stack in case it is needed
         #print("smallest stack: ", min(available_stack_list))
-        if min(available_stack_list) > 21:
+        if min(available_stack_list) > item_stacks['pri_reblath'][1]:
             available_stack_list.append(15)
             cost += base_stack_cost
             #print("adding 15 stack #2")
@@ -557,11 +578,8 @@ def enhance_pen(reblath_array, boss_array, cost, available_stack_list):
                 cost += cron_tet_boss(available_stack_list[1], boss_array, available_stack_list)
             else:
                 cost += enhance_tet_boss(stack, boss_array, available_stack_list)
-                if boss_array[3] > num_pens_before_tap:
+                if boss_array[3] > num_pens_before_tap or boss_array[3] > 1:
                     hitPen = True
-
-
-
 
 
 
@@ -612,6 +630,8 @@ def main(iterations):
     #enhance_pen()
     reblath_array = [0, 0, 0, 0, 1] #Duo, Tri, Tet, Pen, pri
     boss_array = [0, 0, 0, 0, 1, 1] #Duo, Tri, Tet, Pen, pri, valks
+    reblath_stack_array = [0, 0, 0, 0, 0] #duo, tri, tet, pen, pri
+    boss_stack_array = [0, 0, 0, 0, 0, 0] #duo, tri, tet, pen, pri, valks
     cost = 0
     available_stack_list = [15] #Starting stack we initiall click on
 
@@ -619,7 +639,7 @@ def main(iterations):
     for i in range(iterations):
         print("--------------------------------------------------------------------------------------------------------------------------")
         print()
-        reblath_array, boss_array, cost, available_stack_list =  enhance_pen(reblath_array, boss_array, 0, available_stack_list)
+        reblath_array, boss_array, cost, available_stack_list =  enhance_pen(reblath_array, boss_array, 0, available_stack_list, reblath_stack_array, boss_stack_array)
         cost_list.append(cost/1000000)
         print("--------------------------------------------------------------------------------------------------------------------------")
 
@@ -633,4 +653,4 @@ def main(iterations):
 
 
 #RUN MAIN
-main(5)
+main(1)
