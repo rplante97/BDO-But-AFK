@@ -638,8 +638,8 @@ def enhance_pen(reblath_array, boss_array, cost, available_stack_list, acc_array
             print("Boss Gear: ")
             print("duo_boss: ", boss_array[0], "| tri_boss: ", boss_array[1], "| tet_boss: ", boss_array[2], "| pen_boss: ", boss_array[3] )
             print("")
-            if cost < 0:
-                nextt = input("hit any button: ")
+            #if cost < 0:
+                #nextt = input("hit any button: ")
 
         if boss_array[3] > 0:
             hitPen = True
