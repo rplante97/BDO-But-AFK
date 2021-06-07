@@ -1,91 +1,77 @@
 import requests
-import random
-import time
 import pickle
+
+armor_dict = {
+    "giath": 11013,
+    "grunil": 10933,
+    "griffon": 11101,
+    "rednose": 11014,
+    "dimtree": 11017,
+    "muskan": 11016,
+    "urugon": 11103,
+    "bheg": 11015,
+    "leeburs": 11102,
+    "bsarmor": 719902,
+    "bshelmet": 719901,
+    "bsshoes": 719904,
+    "bsgloves": 719903,
+}
+
+accessories_dict = {
+    "layten": 11630,
+    "distortion": 11853,
+    "tungradring": 12061,
+    "tungradbelt": 12237,
+    "ogre": 11607,
+    "ruins": 12060,
+    "crescent": 12031,
+    "valtarra": 12236,
+    "turos": 12257,
+    "tungradnecklace": 11629,
+    "ominous": 12068
+}
 
 # Grab up to date prices from API
 def update_prices(filename):
     prices = {}
+    armor_weapon_enhancement_levels = {"16", "17", "18", "19", "20"}
+    acc_enhancement_levels = {"0", "1", "2", "3", "4", "5"}
 
     print("Updating Grunil prices...")
-    prices['pri_grunil'] = requests.get("https://omegapepega.com/na/Grunil%20Helmet/16", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['duo_grunil'] = requests.get("https://omegapepega.com/na/Grunil%20Helmet/17", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['tri_grunil'] = requests.get("https://omegapepega.com/na/Grunil%20Helmet/18", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['tet_grunil'] = requests.get("https://omegapepega.com/na/Grunil%20Helmet/19", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['pen_grunil'] = requests.get("https://omegapepega.com/na/Grunil%20Helmet/20", headers={'Connection': 'close'}).json()['pricePerOne']
-
-    print("Updating Griffon prices...")
-    prices['pri_griffon'] = requests.get("https://omegapepega.com/na/Griffon's%20Helmet/16", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['duo_griffon'] = requests.get("https://omegapepega.com/na/Griffon's%20Helmet/17", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['tri_griffon'] = requests.get("https://omegapepega.com/na/Griffon's%20Helmet/18", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['tet_griffon'] = requests.get("https://omegapepega.com/na/Griffon's%20Helmet/19", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['pen_griffon'] = requests.get("https://omegapepega.com/na/Griffon's%20Helmet/20", headers={'Connection': 'close'}).json()['pricePerOne']
-
-    print("Updating Giath prices...")
-    prices['pri_giath'] = requests.get("https://omegapepega.com/na/Giath's%20Helmet/16", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['duo_giath'] = requests.get("https://omegapepega.com/na/Giath's%20Helmet/17", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['tri_giath'] = requests.get("https://omegapepega.com/na/Giath's%20Helmet/18", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['tet_giath'] = requests.get("https://omegapepega.com/na/Giath's%20Helmet/19", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['pen_giath'] = requests.get("https://omegapepega.com/na/Giath's%20Helmet/20", headers={'Connection': 'close'}).json()['pricePerOne']
-
-    print("Updating Red Nose prices...")
-    prices['pri_rednose'] = requests.get("https://omegapepega.com/na/Red%20Nose's%20Armor/16", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['duo_rednose'] = requests.get("https://omegapepega.com/na/Red%20Nose's%20Armor/17", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['tri_rednose'] = requests.get("https://omegapepega.com/na/Red%20Nose's%20Armor/18", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['tet_rednose'] = requests.get("https://omegapepega.com/na/Red%20Nose's%20Armor/19", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['pen_rednose'] = requests.get("https://omegapepega.com/na/Red%20Nose's%20Armor/20", headers={'Connection': 'close'}).json()['pricePerOne']
-
-    print("Updating Dim Tree prices...")
-    prices['pri_dimtree'] = requests.get("https://omegapepega.com/na/Dim%20Tree%20Spirit's%20Armor/16", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['duo_dimtree'] = requests.get("https://omegapepega.com/na/Dim%20Tree%20Spirit's%20Armor/17", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['tri_dimtree'] = requests.get("https://omegapepega.com/na/Dim%20Tree%20Spirit's%20Armor/18", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['tet_dimtree'] = requests.get("https://omegapepega.com/na/Dim%20Tree%20Spirit's%20Armor/19", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['pen_dimtree'] = requests.get("https://omegapepega.com/na/Dim%20Tree%20Spirit's%20Armor/20", headers={'Connection': 'close'}).json()['pricePerOne']
-
-    print("Updating Muskan prices...")
-    prices['pri_muskan'] = requests.get("https://omegapepega.com/na/Muskan's%20Shoes/16", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['duo_muskan'] = requests.get("https://omegapepega.com/na/Muskan's%20Shoes/17", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['tri_muskan'] = requests.get("https://omegapepega.com/na/Muskan's%20Shoes/18", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['tet_muskan'] = requests.get("https://omegapepega.com/na/Muskan's%20Shoes/19", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['pen_muskan'] = requests.get("https://omegapepega.com/na/Muskan's%20Shoes/20", headers={'Connection': 'close'}).json()['pricePerOne']
-
-    print("Updating Urugon prices...")
-    prices['pri_urugon'] = requests.get("https://omegapepega.com/na/Urugon's%20Shoes/16", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['duo_urugon'] = requests.get("https://omegapepega.com/na/Urugon's%20Shoes/17", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['tri_urugon'] = requests.get("https://omegapepega.com/na/Urugon's%20Shoes/18", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['tet_urugon'] = requests.get("https://omegapepega.com/na/Urugon's%20Shoes/19", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['pen_urugon'] = requests.get("https://omegapepega.com/na/Urugon's%20Shoes/20", headers={'Connection': 'close'}).json()['pricePerOne']
-
-    print("Updating Bheg prices...")
-    prices['pri_bheg'] = requests.get("https://omegapepega.com/na/Bheg's%20Gloves/16", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['duo_bheg'] = requests.get("https://omegapepega.com/na/Bheg's%20Gloves/17", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['tri_bheg'] = requests.get("https://omegapepega.com/na/Bheg's%20Gloves/18", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['tet_bheg'] = requests.get("https://omegapepega.com/na/Bheg's%20Gloves/19", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['pen_bheg'] = requests.get("https://omegapepega.com/na/Bheg's%20Gloves/20", headers={'Connection': 'close'}).json()['pricePerOne']
-
-    print("Updating Leebur prices...")
-    prices['pri_leebur'] = requests.get("https://omegapepega.com/na/Leebur's%20Gloves/16", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['duo_leebur'] = requests.get("https://omegapepega.com/na/Leebur's%20Gloves/17", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['tri_leebur'] = requests.get("https://omegapepega.com/na/Leebur's%20Gloves/18", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['tet_leebur'] = requests.get("https://omegapepega.com/na/Leebur's%20Gloves/19", headers={'Connection': 'close'}).json()['pricePerOne']
-    prices['pen_leebur'] = requests.get("https://omegapepega.com/na/Leebur's%20Gloves/20", headers={'Connection': 'close'}).json()['pricePerOne']
+    grunil_prices = get_prices_for_levels(10933, armor_weapon_enhancement_levels)
+    prices['pri_grunil'] = grunil_prices["16"]
+    prices['duo_grunil'] = grunil_prices["17"]
+    prices['tri_grunil'] = grunil_prices["18"]
+    prices['tet_grunil'] = grunil_prices["19"]
+    prices['pen_grunil'] = grunil_prices["20"]
     
     with open(filename, 'wb') as file_handler:
         pickle.dump(prices, file_handler)
 
-    #print(prices)
+
+def get_prices_for_levels(itemid, levels):
+    json_response = requests.get(f"http://bdomarketapi.com/market/NA/items?id={itemid}", headers={'Connection': 'close'}).json()
+
+    level_price_dict = {}
+    for item in json_response:
+        if item["level"] in levels:
+            level_price_dict[item["level"]] = item["price"]
+
+    return level_price_dict
 
 prices_file = 'prices.pk'
 # ONLY RUN TO UPDATE STALE PRICES
-#update_prices(prices_file) #API is SLOW ~1 min to fetch all prices
+update_prices(prices_file) #API is SLOW ~1 min to fetch all prices
 
 with open(prices_file, 'rb') as file_handler:
     prices = pickle.load(file_handler)
 
+FREE_FAILSTACK = 1
+BLACK_STONE_PRICE = 120000
 #All numbers in MILLIONS
-REBLATH_18 = 6.09
-REBLATH_21 = 8.049
-REBLATH_24 = 10.549
+REBLATH_18 = BLACK_STONE_PRICE * (18-FREE_FAILSTACK)
+REBLATH_21 = BLACK_STONE_PRICE * (21-FREE_FAILSTACK)
+REBLATH_24 = BLACK_STONE_PRICE * (24-FREE_FAILSTACK)
 
 #BASE CHANCES
 #base_chance, increase_per_fs, softcap_increase_per_fs, softcap_fs, added_fs, downgrade_name, upgrade_name
