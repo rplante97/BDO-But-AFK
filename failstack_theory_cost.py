@@ -1,3 +1,12 @@
+''' how to use 
+
+command line call: python failstack_theory_cost.py <stack>
+
+stack = 44 or 110. no other stack is supported
+
+
+'''
+
 import sys
 
 db = {}
@@ -6,8 +15,10 @@ strategy_og = [('pri_reblath', 2, 3), ('duo_reblath', 1 , 4), ('pri_boss',2, 3),
 
 strategy_44 = [('pri_reblath', 4, 3), ('duo_reblath', 3, 4)]
 
+strategy_110 = [('pri_reblath', 4, 3), ('duo_reblath', 0 , 4), ('pri_boss',0, 3), ('duo_reblath', 4, 4), ('duo_boss', 0, 4), ('tri_reblath', 4, 5), ('valks', 10, 1), ('tri_boss', 0, 5), ('tet_reblath', 6, 5)]
+
 reblath_17 = 4.4
-meme_frag = 2.3
+meme_frag = 1.8
 hard_conc = 2.25
 start_stack = 17
 
@@ -23,7 +34,7 @@ if end_stack == 44:
 	strategy = strategy_44
 
 elif end_stack == 110:
-	strategy = strategy_og
+	strategy = strategy_110
 
 db['pri_reblath'] = [0, 'duo_reblath', .0769, .0077, hard_conc, .012, 3, 'pri_reblath', 82, .00155] #cost, name_of_success, base_chance, chance_growth, click_cost, stack_growth, down-grade name, stack softcap, post softcap gfain
 db['duo_reblath'] = [0, 'tri_reblath', .0625, .00625, hard_conc, .012, 4, 'pri_reblath', 102, .00125]
